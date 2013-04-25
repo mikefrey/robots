@@ -5,26 +5,41 @@ var ctx = canvas.getContext('2d')
 var width = canvas.width
 var height = canvas.height
 var SCALE = 64
+var GRIDSIZE = 12
 
 function setupBackground() {
 
   var bgcanvas = document.getElementById('bg')
   var bgctx = bgcanvas.getContext('2d')
 
-  for (var i = 0; i < width; i+=SCALE) {
-    bgctx.beginPath()
-    bgctx.moveTo(i+0.5, 0)
-    bgctx.lineTo(i+0.5, height)
-    bgctx.stroke()
-  }
+  isoCtx(bgctx, function() {
 
-  for (var i = 0; i < height; i+=SCALE) {
-    bgctx.beginPath()
-    bgctx.moveTo(0, i+0.5)
-    bgctx.lineTo(width, i+0.5)
-    bgctx.stroke()
-  }
+    for (var i = 0; i < GRIDSIZE+1; i+=1) {
+      bgctx.beginPath()
+      bgctx.moveTo(i*SCALE+0.5, 0)
+      bgctx.lineTo(i*SCALE+0.5, SCALE*GRIDSIZE)
+      bgctx.stroke()
+    }
 
+    for (var i = 0; i < GRIDSIZE+1; i+=1) {
+      bgctx.beginPath()
+      bgctx.moveTo(0, i*SCALE+0.5)
+      bgctx.lineTo(SCALE*GRIDSIZE, i*SCALE+0.5)
+      bgctx.stroke()
+    }
+
+  })
+
+}
+
+
+function isoCtx(ctx, fn) {
+  ctx.save()
+  ctx.translate(width/2, 0)
+  ctx.scale(1, 0.5)
+  ctx.rotate(45 * Math.PI / 180)
+  fn()
+  ctx.restore()
 }
 
 
@@ -100,23 +115,28 @@ var robot = {
 
   draw: function() {
     ctx.clearRect(0,0,width,height)
-    ctx.save()
-    ctx.translate(
-      this.pos.x * SCALE + SCALE / 2,
-      this.pos.y * SCALE + SCALE / 2
-    )
-    ctx.rotate(Math.atan2(this.dir.y, this.dir.x))
-    ctx.strokeRect(
-      SCALE * -0.3,
-      SCALE * -0.3,
-      SCALE * 0.6,
-      SCALE * 0.6
-    )
-    ctx.beginPath()
-    ctx.moveTo(0, 0)
-    ctx.lineTo(SCALE * 0.3, 0)
-    ctx.stroke()
-    ctx.restore()
+
+    isoCtx(ctx, function() {
+
+      ctx.save()
+      ctx.translate(
+        this.pos.x * SCALE + SCALE / 2,
+        this.pos.y * SCALE + SCALE / 2
+      )
+      ctx.rotate(Math.atan2(this.dir.y, this.dir.x))
+      ctx.strokeRect(
+        SCALE * -0.3,
+        SCALE * -0.3,
+        SCALE * 0.6,
+        SCALE * 0.6
+      )
+      ctx.beginPath()
+      ctx.moveTo(0, 0)
+      ctx.lineTo(SCALE * 0.3, 0)
+      ctx.stroke()
+      ctx.restore()
+
+    }.bind(this))
     return this
   }
 
