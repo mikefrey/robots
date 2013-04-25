@@ -33,7 +33,9 @@ function setupBackground() {
 var robot = {
 
   pos: { x:1, y:1 },
-  dir: { x:1, y:0 },  // u, d, l, r
+  dir: { x:1, y:0 },
+  queue: [],
+  freq: 400,
 
   moveForward: function() {
     this.pos = vector.add(this.pos, this.dir)
@@ -70,6 +72,30 @@ var robot = {
   release: function() {
 
     return this
+  },
+
+  enqueue: function(fname) {
+    if (typeof this[fname] == 'function')
+      this.queue.push(fname)
+  },
+
+  start: function() {
+    this.step()
+  },
+
+  stop: function() {
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+    }
+  },
+
+  step: function() {
+    if (this.queue.length == 0) {
+      return
+    }
+    var action = this.queue.shift()
+    this[action]().draw()
+    this.timeout = setTimeout(this.step.bind(this), this.freq)
   },
 
   draw: function() {
@@ -129,13 +155,16 @@ var vector = {
 
 
 var btnLeft = document.getElementById('left')
-btnLeft.addEventListener('click', function () { robot.turnLeft().draw() }, false)
+btnLeft.addEventListener('click', robot.enqueue.bind(robot, 'turnLeft'), false)
 
 var btnRight = document.getElementById('right')
-btnRight.addEventListener('click', function() { robot.turnRight().draw() }, false)
+btnRight.addEventListener('click', robot.enqueue.bind(robot, 'turnRight'), false)
 
 var btnForward = document.getElementById('forward')
-btnForward.addEventListener('click', function() { robot.moveForward().draw() }, false)
+btnForward.addEventListener('click', robot.enqueue.bind(robot, 'moveForward'), false)
+
+var btnStart = document.getElementById('start')
+btnStart.addEventListener('click', robot.start.bind(robot), false)
 
 
 setupBackground()
