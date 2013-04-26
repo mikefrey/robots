@@ -14,6 +14,17 @@ function setupBackground() {
 
   isoCtx(bgctx, function() {
 
+    // draw the unpassable areas of the grid
+    bgctx.fillStyle = '#000000'
+    for (var y = 0; y < grid.length; y+=1) {
+      for (var x = 0; x < grid[y].length; x+=1) {
+        if (grid[y][x]) {
+          bgctx.fillRect(x*SCALE, y*SCALE, SCALE, SCALE)
+        }
+      }
+    }
+
+    // draw x grid lines
     for (var i = 0; i < GRIDSIZE+1; i+=1) {
       bgctx.beginPath()
       bgctx.moveTo(i*SCALE+0.5, 0)
@@ -21,6 +32,7 @@ function setupBackground() {
       bgctx.stroke()
     }
 
+    // draw y grid lines
     for (var i = 0; i < GRIDSIZE+1; i+=1) {
       bgctx.beginPath()
       bgctx.moveTo(0, i*SCALE+0.5)
@@ -32,7 +44,7 @@ function setupBackground() {
 
 }
 
-
+// transform the context into isometric
 function isoCtx(ctx, fn) {
   ctx.save()
   ctx.translate(width/2, 0)
@@ -41,8 +53,6 @@ function isoCtx(ctx, fn) {
   fn()
   ctx.restore()
 }
-
-
 
 
 var robot = {
@@ -54,6 +64,11 @@ var robot = {
 
   moveForward: function() {
     this.pos = vector.add(this.pos, this.dir)
+    return this
+  },
+
+  moveBackward: function() {
+    this.pos = vector.subtract(this.pos, this.dir)
     return this
   },
 
@@ -124,6 +139,13 @@ var robot = {
         this.pos.y * SCALE + SCALE / 2
       )
       ctx.rotate(Math.atan2(this.dir.y, this.dir.x))
+      ctx.fillStyle = '#448844'
+      ctx.fillRect(
+        SCALE * -0.3,
+        SCALE * -0.3,
+        SCALE * 0.6,
+        SCALE * 0.6
+      )
       ctx.strokeRect(
         SCALE * -0.3,
         SCALE * -0.3,
@@ -143,9 +165,18 @@ var robot = {
 }
 
 var grid = [
-
-
-
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+  [0,0,1,0,0,0,0,0,0,0,1,1,0,0,0],
+  [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+  [1,1,1,0,0,0,0,0,0,1,1,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ]
 
 
@@ -166,6 +197,16 @@ var vector = {
       v.y += args[i].y
     }
     return v
+  },
+
+  subtract: function(v) {
+    var args = Array.prototype.slice.call(arguments, 1)
+    v = { x:v.x, y:v.y }
+    for (var i = 0; i < args.length; i++) {
+      v.x -= args[i].x
+      v.y -= args[i].y
+    }
+    return v
   }
 
 }
@@ -182,6 +223,9 @@ btnRight.addEventListener('click', robot.enqueue.bind(robot, 'turnRight'), false
 
 var btnForward = document.getElementById('forward')
 btnForward.addEventListener('click', robot.enqueue.bind(robot, 'moveForward'), false)
+
+var btnBackward = document.getElementById('backward')
+btnBackward.addEventListener('click', robot.enqueue.bind(robot, 'moveBackward'), false)
 
 var btnStart = document.getElementById('start')
 btnStart.addEventListener('click', robot.start.bind(robot), false)
