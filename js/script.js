@@ -61,14 +61,25 @@ var robot = {
   dir: { x:1, y:0 },
   queue: [],
   freq: 400,
+  blocked: false,
 
   moveForward: function() {
-    this.pos = vector.add(this.pos, this.dir)
+    var newPos = vector.add(this.pos, this.dir)
+    if (grid[newPos.y][newPos.x] === 1) {
+      this.blocked = true
+    } else {
+      this.pos = newPos
+    }
     return this
   },
 
   moveBackward: function() {
-    this.pos = vector.subtract(this.pos, this.dir)
+    var newPos = vector.subtract(this.pos, this.dir)
+    if (grid[newPos.y][newPos.x] === 1) {
+      this.blocked = true
+    } else {
+      this.pos = newPos
+    }
     return this
   },
 
@@ -123,6 +134,11 @@ var robot = {
     if (this.queue.length == 0) {
       return
     }
+    if (this.blocked) {
+      this.queue = []
+      return
+    }
+
     var action = this.queue.shift()
     this[action]().draw()
     this.timeout = setTimeout(this.step.bind(this), this.freq)
@@ -139,7 +155,7 @@ var robot = {
         this.pos.y * SCALE + SCALE / 2
       )
       ctx.rotate(Math.atan2(this.dir.y, this.dir.x))
-      ctx.fillStyle = '#448844'
+      ctx.fillStyle = this.blocked ? '#ff0000' : '#448844'
       ctx.fillRect(
         SCALE * -0.3,
         SCALE * -0.3,
