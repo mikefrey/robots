@@ -107,13 +107,21 @@ var robot = {
   },
 
   pickup: function() {
-
+    if (vector.equal(ball.pos, vector.add(this.pos, this.dir))) {
+      this.ball = ball
+    }
     return this
   },
 
   release: function() {
-
+    this.ball = null
     return this
+  },
+
+  moveBall: function() {
+    if (this.ball) {
+      this.ball.pos = vector.add(this.pos, this.dir)
+    }
   },
 
   enqueue: function(fname) {
@@ -141,7 +149,10 @@ var robot = {
     }
 
     var action = this.queue.shift()
-    this[action]().draw()
+    this[action]()
+    this.moveBall()
+    this.draw()
+    ball.draw()
     this.timeout = setTimeout(this.step.bind(this), this.freq)
   },
 
@@ -171,7 +182,7 @@ var robot = {
       )
       ctx.beginPath()
       ctx.moveTo(0, 0)
-      ctx.lineTo(SCALE * 0.3, 0)
+      ctx.lineTo(SCALE * (this.ball?1:0.3), 0)
       ctx.stroke()
       ctx.restore()
 
@@ -185,7 +196,8 @@ var robot = {
 
 var ball = {
 
-  pos: { x:10, y:10 },
+  // pos: { x:10, y:10 },
+  pos: { x:5, y:1 },
 
   draw: function() {
     isoCtx(ctx, function() {
@@ -196,17 +208,17 @@ var ball = {
 
       var radius = SCALE*0.3
 
-      ctx.fillStyle = '#CCCCCC'
-      ctx.beginPath()
-      ctx.arc(0, 0, radius, d2r(0), d2r(360))
-      ctx.fill()
+      // ctx.fillStyle = '#CCCCCC'
+      // ctx.beginPath()
+      // ctx.arc(0, 0, radius, d2r(0), d2r(360))
+      // ctx.fill()
 
-      ctx.rotate(-45 * Math.PI / 180)
-      ctx.scale(1, 2)
+      // ctx.rotate(-45 * Math.PI / 180)
+      // ctx.scale(1, 2)
 
       ctx.fillStyle = '#7777FF'
       ctx.beginPath()
-      ctx.arc(0, -radius*0.8, radius, d2r(0), d2r(360))
+      ctx.arc(0, 0, radius, d2r(0), d2r(360))
       ctx.fill()
       ctx.stroke()
     }.bind(this))
@@ -229,8 +241,8 @@ var grid = [
   [0,0,0,0,0,0,0,0,0,0,0,0],
   [1,1,1,0,0,0,0,0,0,0,0,0],
   [1,1,1,0,0,0,0,0,0,1,1,1],
-  [0,0,0,0,0,0,0,0,0,1,0,1],
-  [0,0,0,0,0,0,0,0,0,0,0,0]
+  [0,0,0,0,0,0,0,0,0,0,0,1],
+  [0,0,0,0,0,0,0,0,0,1,1,1]
 ]
 
 
@@ -242,6 +254,10 @@ var r2d = function(a) {
 }
 
 var vector = {
+
+  equal: function(a, b) {
+    return a.x === b.x && a.y === b.y
+  },
 
   add: function() {
     var args = Array.prototype.slice.call(arguments, 0)
@@ -280,6 +296,12 @@ btnForward.addEventListener('click', robot.enqueue.bind(robot, 'moveForward'), f
 
 var btnBackward = document.getElementById('backward')
 btnBackward.addEventListener('click', robot.enqueue.bind(robot, 'moveBackward'), false)
+
+var btnPickup = document.getElementById('pickup')
+btnPickup.addEventListener('click', robot.enqueue.bind(robot, 'pickup'), false)
+
+var btnRelease = document.getElementById('release')
+btnRelease.addEventListener('click', robot.enqueue.bind(robot, 'release'), false)
 
 var btnStart = document.getElementById('start')
 btnStart.addEventListener('click', robot.start.bind(robot), false)
