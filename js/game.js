@@ -5,8 +5,13 @@ function Game(opts) {
   this.gridSize = opts.gridSize
   this.topMargin = opts.topMargin
 
+  // setup the canvases
   this.ctx = initCanvas(opts.canvas, width, height)
   this.bgctx = initCanvas(opts.bgcanvas, width, height)
+
+  // move the game board down a bit
+  this.ctx.translate(0, this.topMargin)
+  this.bgctx.translate(0, this.topMargin)
 
   this.level = new Level()
   this.loadEntities()

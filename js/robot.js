@@ -96,8 +96,6 @@ Robot.prototype.step = function() {
   var action = this.queue.shift()
   this[action]()
   this.moveBall()
-  this.draw()
-  ball.draw()
   this.timeout = setTimeout(this.step.bind(this), this.freq)
 }
 

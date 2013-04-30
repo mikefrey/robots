@@ -10,7 +10,7 @@ var game = new Game({
   width: 1024,
   height: 768,
   gridSize: 10,
-  topMargin: 200,
+  topMargin: 150,
   canvas: 'game',
   bgcanvas: 'bg'
 })

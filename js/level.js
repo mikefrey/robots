@@ -41,7 +41,6 @@
     var grid = this.grid
 
     isoCtx(ctx, function() {
-      ctx.translate(0, game.topMargin)
 
       // draw the grid tiles
       for (var y = 0; y < grid.length; y+=1) {
@@ -65,6 +64,7 @@
       }
 
     })
+
   }
 
 })()
