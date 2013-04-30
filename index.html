@@ -3,8 +3,8 @@
 <head>
   <title>Robots!</title>
   <style>
-    canvas { position:absolute; top:60px; left:10px; }
-    span { padding-left:30px; }
+    canvas.game { position:absolute; top:60px; left:10px; border:2px solid black; }
+    span.spacer { padding-left:30px; }
   </style>
 </head>
 <body>
@@ -14,7 +14,7 @@
     <button id="backward">Backward</button>
     <button id="right">Right</button>
 
-    <span></span>
+    <span class="spacer"></span>
 
     <button id="pickup">Pickup</button>
     <button id="release">Drop</button>
@@ -23,14 +23,20 @@
 
     <button id="start">Start</button>
   </div>
-  <canvas id="bg" width="1024" height="768"></canvas>
-  <canvas id="game" width="1024" height="768"></canvas>
+  <canvas class="game" id="bg" width="1024" height="768"></canvas>
+  <canvas class="game" id="game" width="1024" height="768"></canvas>
   <!-- <canvas id="bg" width="2048" height="1536"></canvas>
   <canvas id="game" width="2048" height="1536"></canvas> -->
+
+  <script src="js/lib/stats.js"></script>
   <script src="js/vector2.js"></script>
   <script src="js/robot.js"></script>
   <script src="js/ball.js"></script>
-  <script src="js/ui.js"></script>
+  <script src="js/switch.js"></script>
+  <script src="js/exit.js"></script>
+  <script src="js/level.js"></script>
+  <script src="js/game.js"></script>
   <script src="js/script.js"></script>
+  <script src="js/ui.js"></script>
 </body>
 </html>

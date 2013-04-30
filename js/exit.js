@@ -1,11 +1,11 @@
-function Ball(pos) {
+function Exit(pos) {
   this.pos = pos
 }
 
-Ball.prototype.update = function() {
+Exit.prototype.update = function() {
 }
 
-Ball.prototype.draw = function(ctx) {
+Exit.prototype.draw = function(ctx) {
   var scale = game.scale
   isoCtx(ctx, function() {
     ctx.translate(
@@ -15,9 +15,14 @@ Ball.prototype.draw = function(ctx) {
 
     var radius = scale*0.3
 
-    ctx.fillStyle = '#7777FF'
+    ctx.fillStyle = '#FFFFFF'
     ctx.beginPath()
-    ctx.arc(0, 0, radius, d2r(0), d2r(360))
+    ctx.rect(
+      scale * -0.3,
+      scale * -0.3,
+      scale * 0.6,
+      scale * 0.6
+    )
     ctx.fill()
     ctx.stroke()
   }.bind(this))
