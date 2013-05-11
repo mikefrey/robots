@@ -10,7 +10,7 @@ Robot.prototype.moveForward = function() {
   var grid = game.level.grid
   var newPos = vector2.add(this.pos, this.dir)
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
-    this.blocked = true
+    this.block()
   } else {
     this.pos = newPos
   }
@@ -21,7 +21,7 @@ Robot.prototype.moveBackward = function() {
   var grid = game.level.grid
   var newPos = vector2.subtract(this.pos, this.dir)
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
-    this.blocked = true
+    this.block()
   } else {
     this.pos = newPos
   }
@@ -51,15 +51,21 @@ Robot.prototype.turnAround = function() {
 }
 
 Robot.prototype.pickup = function() {
-  var ent = game.entityAt(vector2.add(this.pos, this.dir))
-  if (ent instanceof Ball) {
-    this.ball = ent
+  var target = game.entityAt(vector2.add(this.pos, this.dir), Ball)
+  if (target && target.pickedUp()) {
+    this.ball = target
+  } else {
+    this.block()
   }
   return this
 }
 
 Robot.prototype.release = function() {
-  this.ball = null
+  if (this.ball && this.ball.dropped()) {
+    this.ball = null
+  } else {
+    this.block()
+  }
   return this
 }
 
@@ -67,6 +73,10 @@ Robot.prototype.moveBall = function() {
   if (this.ball) {
     this.ball.pos = vector2.add(this.pos, this.dir)
   }
+}
+
+Robot.prototype.block = function() {
+  this.blocked = true
 }
 
 Robot.prototype.enqueue = function(fname) {

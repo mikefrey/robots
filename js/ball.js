@@ -2,7 +2,24 @@ function Ball(pos) {
   this.pos = pos
 }
 
+Ball.prototype.dropped = function() {
+  var target = game.entityAt(this.pos, Switch)
+  if (target) {
+    return target.turnOn(this)
+  }
+  return true
+}
+
+Ball.prototype.pickedUp = function() {
+  var target = game.entityAt(this.pos, Switch)
+  if (target) {
+    return target.turnOff(this)
+  }
+  return true
+}
+
 Ball.prototype.update = function() {
+
 }
 
 Ball.prototype.draw = function(ctx) {
