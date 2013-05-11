@@ -58,10 +58,12 @@ Game.prototype.draw = function() {
 }
 
 // get the entity at the given position
-Game.prototype.entityAt = function(pos) {
+Game.prototype.entityAt = function(pos, type) {
+  var entities = this.entities
   for (var i = 0; i < entities.length; i+=1) {
-    if (vector2.equal(entities[i].pos, pos)) {
-      return entities[i]
+    var ent = entities[i]
+    if (vector2.equal(ent.pos, pos) && ent instanceof type) {
+      return ent
     }
   }
   return null
