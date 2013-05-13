@@ -49,11 +49,22 @@ Game.prototype.update = function() {
 
 // draw all the things
 Game.prototype.draw = function() {
+  this.ctx.clearRect(0, 0, this.width, this.height)
   // draw the level
   this.level.draw(this.bgctx)
   // draw each entity
-  for (var i = 0; i < this.entities.length; i+=1) {
-    this.entities[i].draw(this.ctx)
+  var ent, i
+  for (i = 0; i < this.entities.length; i+=1) {
+    ent = this.entities[i]
+    if (ent instanceof Switch) ent.draw(this.ctx)
+  }
+  for (i = 0; i < this.entities.length; i+=1) {
+    ent = this.entities[i]
+    if (ent instanceof Robot) ent.draw(this.ctx)
+  }
+  for (i = 0; i < this.entities.length; i+=1) {
+    ent = this.entities[i]
+    if (ent instanceof Ball) ent.draw(this.ctx)
   }
 }
 

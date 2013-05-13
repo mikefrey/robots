@@ -114,7 +114,6 @@ Robot.prototype.update = function() {
 
 Robot.prototype.draw = function(ctx) {
   var scale = game.scale
-  ctx.clearRect(0, 0, game.width, game.height)
 
   isoCtx(ctx, function() {
 
