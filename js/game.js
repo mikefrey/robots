@@ -9,10 +9,6 @@ function Game(opts) {
   this.ctx = initCanvas(opts.canvas, width, height)
   this.bgctx = initCanvas(opts.bgcanvas, width, height)
 
-  // move the game board down a bit
-  this.ctx.translate(0, this.topMargin)
-  this.bgctx.translate(0, this.topMargin)
-
   this.level = new Level()
   this.loadEntities()
 }
@@ -50,6 +46,7 @@ Game.prototype.update = function() {
 // draw all the things
 Game.prototype.draw = function() {
   this.ctx.clearRect(0, 0, this.width, this.height)
+  this.bgctx.clearRect(0, 0, this.width, this.height)
   // draw the level
   this.level.draw(this.bgctx)
   // draw each entity
@@ -111,6 +108,9 @@ function initCanvas(id, width, height) {
 // transform the context into isometric
 function isoCtx(ctx, fn) {
   ctx.save()
+
+  // move the game board down a bit
+  ctx.translate(0, game.topMargin)
   ctx.translate(game.width/2, 0)
   ctx.scale(1, 0.5)
   ctx.rotate(45 * Math.PI / 180)
@@ -127,3 +127,41 @@ var d2r = function(a) {
 var r2d = function(a) {
   return a / (Math.PI/180)
 }
+
+var theta = d2r(45)
+var csTheta = Math.cos(theta)
+var snTheta = Math.sin(theta)
+var thetaInv = d2r(315)
+var csThetaInv = Math.cos(thetaInv)
+var snThetaInv = Math.sin(thetaInv)
+
+// translate screen to world
+var s2w = function(pos) {
+  // rotate
+  var x = pos.x
+  var y = pos.y
+  pos.x = x * csTheta - y * snTheta
+  pos.y = x * snTheta + y * csTheta
+  // scale
+  pos.y *= 0.5
+  // translate
+  pos.x += game.width/2
+  pos.y += game.topMargin
+  return pos
+}
+
+// translate world to screen
+var w2s = function(pos) {
+  // translate
+  pos.x -= game.width/2
+  pos.y -= game.topMargin
+  // scale
+  pos.y /= 0.5
+  // rotate
+  var y = pos.y
+  var x = pos.x
+  pos.x = x * csThetaInv - y * snThetaInv
+  pos.y = x * snThetaInv + y * csThetaInv
+  return pos
+}
+

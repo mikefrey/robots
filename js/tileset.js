@@ -17,11 +17,11 @@ TileSet.prototype.draw = function(ctx, t, x, y, w, h) {
   ctx.drawImage(
     this.img,
     t * this.width,
-    t * this.height,
+    0,
     this.width,
     this.height,
-    x - this.offsetX,
-    y - this.offsetY,
+    x - (this.offsetX/this.width)*w,
+    y - (this.offsetY/this.width)*h,
     w,
     h
   )
