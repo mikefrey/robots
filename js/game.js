@@ -1,3 +1,35 @@
+// setup canvase elements to the correct size
+function initCanvas(id, width, height) {
+  var canvas = document.getElementById(id)
+  canvas.width = width
+  canvas.height = height
+  return canvas.getContext('2d')
+}
+
+// transform the context into isometric
+function isoCtx(ctx, fn) {
+  ctx.save()
+
+  // move the game board down a bit
+  ctx.translate(0, game.topMargin)
+  ctx.translate(game.width/2, 0)
+  ctx.scale(1, 0.5)
+  ctx.rotate(45 * Math.PI / 180)
+  // ctx.transform(0.707, 0.409, -0.707, 0.409, 0, 0)
+  fn()
+  ctx.restore()
+}
+
+// degrees to radians
+var d2r = function(a) {
+  return a * (Math.PI/180)
+}
+// radians to degress
+var r2d = function(a) {
+  return a / (Math.PI/180)
+}
+
+
 function Game(opts) {
   this.scale = opts.scale
   var width = this.width = opts.width
@@ -9,7 +41,7 @@ function Game(opts) {
   this.ctx = initCanvas(opts.canvas, width, height)
   this.bgctx = initCanvas(opts.bgcanvas, width, height)
 
-  this.level = new Level()
+  this.level = new Level(this)
   this.loadEntities()
 }
 
@@ -96,38 +128,6 @@ Game.prototype.loadEntities = function() {
   }
 }
 
-// setup canvase elements to the correct size
-function initCanvas(id, width, height) {
-  var canvas = document.getElementById(id)
-  canvas.width = width
-  canvas.height = height
-  return canvas.getContext('2d')
-}
-
-
-// transform the context into isometric
-function isoCtx(ctx, fn) {
-  ctx.save()
-
-  // move the game board down a bit
-  ctx.translate(0, game.topMargin)
-  ctx.translate(game.width/2, 0)
-  ctx.scale(1, 0.5)
-  ctx.rotate(45 * Math.PI / 180)
-  // ctx.transform(0.707, 0.409, -0.707, 0.409, 0, 0)
-  fn()
-  ctx.restore()
-}
-
-// degrees to radians
-var d2r = function(a) {
-  return a * (Math.PI/180)
-}
-// radians to degress
-var r2d = function(a) {
-  return a / (Math.PI/180)
-}
-
 var theta = d2r(45)
 var csTheta = Math.cos(theta)
 var snTheta = Math.sin(theta)
@@ -136,7 +136,7 @@ var csThetaInv = Math.cos(thetaInv)
 var snThetaInv = Math.sin(thetaInv)
 
 // translate screen to world
-var s2w = function(pos) {
+Game.prototype.s2w = function(pos) {
   // rotate
   var x = pos.x
   var y = pos.y
@@ -145,16 +145,16 @@ var s2w = function(pos) {
   // scale
   pos.y *= 0.5
   // translate
-  pos.x += game.width/2
-  pos.y += game.topMargin
+  pos.x += this.width/2
+  pos.y += this.topMargin
   return pos
 }
 
 // translate world to screen
-var w2s = function(pos) {
+Game.prototype.w2s = function(pos) {
   // translate
-  pos.x -= game.width/2
-  pos.y -= game.topMargin
+  pos.x -= this.width/2
+  pos.y -= this.topMargin
   // scale
   pos.y /= 0.5
   // rotate
@@ -164,4 +164,3 @@ var w2s = function(pos) {
   pos.y = x * snThetaInv + y * csThetaInv
   return pos
 }
-

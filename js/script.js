@@ -15,4 +15,8 @@ var game = new Game({
   bgcanvas: 'bg'
 })
 
-game.start()
+// game.start()
+
+game.level.tiles.onload = function() {
+  game.draw()
+}

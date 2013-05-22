@@ -9,22 +9,29 @@ function TileSet(src, w, h, ox, oy) {
 
 TileSet.prototype.load = function(src) {
   var img = this.img = new Image()
-  img.onload = function(){ this.isLoaded = true }.bind(this)
+  img.onload = function() {
+    this.isLoaded = true
+    if (this.onload) this.onload()
+  }.bind(this)
   img.src = src
 }
 
-TileSet.prototype.draw = function(ctx, t, x, y, w, h) {
-  ctx.drawImage(
-    this.img,
-    t * this.width,
-    0,
-    this.width,
-    this.height,
-    x - (this.offsetX/this.width)*w,
-    y - (this.offsetY/this.width)*h,
-    w,
-    h
-  )
+TileSet.prototype.draw = function(ctx, t, x, y, w) {
+  var sx = t * this.width
+  var sy = 0
+  var sw = this.width
+  var sh = this.height
+
+  // the scaler is the width of the destination tile divided
+  // by the "true" width of the tile in the image
+  var scaler = w / (this.width - this.offsetX*2)
+
+  var dw = this.width * scaler
+  var dh = this.height * scaler
+  var dx = x - dw*0.5
+  var dy = y - this.offsetY * scaler
+
+  ctx.drawImage(this.img, sx, sy, sw, sh, dx, dy, dw, dh)
 }
 
 
