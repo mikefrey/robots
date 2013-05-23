@@ -10,16 +10,16 @@
   }
 
   Level.prototype.grid = [
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,1,_,1,1,1,1,1,1,1],
-    [1,1,_,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1,_],
-    [1,1,1,1,1,1,1,1,1,1],
-    [_,_,_,1,1,1,1,1,1,1],
-    [_,_,_,1,1,1,1,1,1,_]
+    [6,6,6,6,6,6,6,6,6,6],
+    [6,6,6,6,6,6,6,6,6,6],
+    [6,6,6,6,6,6,6,6,6,6],
+    [_,_,_,6,6,6,6,6,6,6],
+    [6,6,_,6,6,6,6,6,6,6],
+    [6,6,_,6,6,6,6,6,6,6],
+    [6,6,_,6,6,6,6,6,6,6],
+    [4,4,_,4,4,4,4,4,4,4],
+    [_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_]
   ]
 
   var B = Ball
@@ -48,7 +48,7 @@
     for (var y = 0; y < grid.length; y+=1) {
       for (var x = 0; x < grid[y].length; x+=1) {
         var pos = game.s2w({x:x*scale, y:y*scale})
-        tiles.draw(ctx, 7, pos.x, pos.y, this.isoTileWidth)
+        tiles.draw(ctx, grid[y][x], pos.x, pos.y, this.isoTileWidth)
 
         // ctx.fillStyle = '#ff0000'
         // ctx.strokeStyle = '#ffffff'
@@ -61,16 +61,16 @@
 
     isoCtx(ctx, function() {
 
-      // draw the grid tiles
-      for (var y = 0; y < grid.length; y+=1) {
-        for (var x = 0; x < grid[y].length; x+=1) {
-          // fill the tile
-          if (grid[y][x]) {
-            ctx.fillStyle = 'rgba(0,0,0,0.15)'
-            ctx.fillRect(x*scale + scale*0.1, y*scale + scale*0.1, scale*0.8, scale*0.8)
-          }
-        }
-      }
+      // // draw the grid tiles
+      // for (var y = 0; y < grid.length; y+=1) {
+      //   for (var x = 0; x < grid[y].length; x+=1) {
+      //     // fill the tile
+      //     if (grid[y][x]) {
+      //       ctx.fillStyle = 'rgba(0,0,0,0.15)'
+      //       ctx.fillRect(x*scale + scale*0.1, y*scale + scale*0.1, scale*0.8, scale*0.8)
+      //     }
+      //   }
+      // }
 
       // // draw the grid lines
       // ctx.strokeStyle = '#888888'
