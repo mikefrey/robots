@@ -41,6 +41,8 @@ function Game(opts) {
   this.ctx = initCanvas(opts.canvas, width, height)
   this.bgctx = initCanvas(opts.bgcanvas, width, height)
 
+  this.input = new Input(opts.canvas)
+
   this.level = new Level(this)
   this.loadEntities()
 }
