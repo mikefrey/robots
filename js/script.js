@@ -1,9 +1,12 @@
-var stats = new Stats();
+window.stats = new Stats();
 stats.setMode(1); // 0: fps, 1: ms
 stats.domElement.style.position = 'fixed';
 stats.domElement.style.right = '0px';
 stats.domElement.style.top = '0px';
 document.body.appendChild( stats.domElement );
+
+var Game = require('./game')
+var Level = require('./level')
 
 var game = new Game({
   scale: 64,
@@ -14,6 +17,8 @@ var game = new Game({
   canvas: 'game',
   bgcanvas: 'bg'
 })
+
+game.loadLevel(Level)
 
 game.start()
 

@@ -1,4 +1,6 @@
-function Switch(pos) {
+
+var Switch = module.exports = function(pos) {
+  this.game = require('./game').game
   this.pos = pos
   this.state = Switch.STATE.OFF
 }
@@ -23,8 +25,9 @@ Switch.prototype.update = function() {
 }
 
 Switch.prototype.draw = function(ctx) {
-  var scale = game.scale
-  isoCtx(ctx, function() {
+  var d2r = this.game.d2r
+  var scale = this.game.scale
+  this.game.isoCtx(ctx, function() {
     ctx.translate(
       this.pos.x * scale + scale / 2,
       this.pos.y * scale + scale / 2

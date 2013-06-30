@@ -1,36 +1,25 @@
-// setup canvase elements to the correct size
-function initCanvas(id, width, height) {
-  var canvas = document.getElementById(id)
-  canvas.width = width
-  canvas.height = height
-  return canvas.getContext('2d')
-}
-
-// transform the context into isometric
-function isoCtx(ctx, fn) {
-  ctx.save()
-
-  // move the game board down a bit
-  ctx.translate(0, game.topMargin)
-  ctx.translate(game.width/2, 0)
-  ctx.scale(1, 0.5)
-  ctx.rotate(45 * Math.PI / 180)
-  // ctx.transform(0.707, 0.409, -0.707, 0.409, 0, 0)
-  fn()
-  ctx.restore()
-}
+var vector2 = require('./vector2')
+// var Level = require('./level')
+var Input = require('./input')
+var Ball = require('./ball')
+var Switch = require('./switch')
+var Robot = require('./robot')
+var Exit = require('./exit')
 
 // degrees to radians
-var d2r = function(a) {
+function d2r(a) {
   return a * (Math.PI/180)
 }
+
 // radians to degress
-var r2d = function(a) {
+function r2d(a) {
   return a / (Math.PI/180)
 }
 
 
-function Game(opts) {
+var Game = module.exports = function(opts) {
+  Game.game = this
+
   this.scale = opts.scale
   var width = this.width = opts.width
   var height = this.height = opts.height
@@ -38,12 +27,14 @@ function Game(opts) {
   this.topMargin = opts.topMargin
 
   // setup the canvases
-  this.ctx = initCanvas(opts.canvas, width, height)
-  this.bgctx = initCanvas(opts.bgcanvas, width, height)
+  this.ctx = this.initCanvas(opts.canvas, width, height)
+  this.bgctx = this.initCanvas(opts.bgcanvas, width, height)
 
   this.input = new Input(opts.canvas)
+}
 
-  this.level = new Level(this)
+Game.prototype.loadLevel = function(Level) {
+  var level = this.level = new Level(this)
   this.loadEntities()
 }
 
@@ -166,3 +157,29 @@ Game.prototype.w2s = function(pos) {
   pos.y = x * snThetaInv + y * csThetaInv
   return pos
 }
+
+// setup canvase elements to the correct size
+Game.prototype.initCanvas = function(id, width, height) {
+  var canvas = document.getElementById(id)
+  canvas.width = width
+  canvas.height = height
+  return canvas.getContext('2d')
+}
+
+// transform the context into isometric
+Game.prototype.isoCtx = function(ctx, fn) {
+  ctx.save()
+
+  // move the game board down a bit
+  ctx.translate(0, this.topMargin)
+  ctx.translate(this.width/2, 0)
+  ctx.scale(1, 0.5)
+  ctx.rotate(45 * Math.PI / 180)
+  // ctx.transform(0.707, 0.409, -0.707, 0.409, 0, 0)
+  fn()
+  ctx.restore()
+}
+
+Game.prototype.d2r = d2r
+
+Game.prototype.r2d = r2d

@@ -1,4 +1,4 @@
-var vector2 = {
+module.exports = {
 
   equal: function(a, b) {
     return a.x === b.x && a.y === b.y

@@ -1,4 +1,6 @@
-function Button(pos, width, height, tile) {
+
+var Button = module.exports = function(pos, width, height, tile) {
+  this.game = require('./game').game
   this.pos = pos
   this.width = width
   this.height = height
@@ -9,14 +11,14 @@ Button.prototype.tapped = function() {}
 
 Button.prototype.update = function() {
   this.state = Button.STATE.NORMAL
-  if (game.input.current) {
-    if (this.contains(game.input.current) && this.contains(game.input.start)) {
+  if (this.game.input.current) {
+    if (this.contains(this.game.input.current) && this.contains(this.game.input.start)) {
       this.state = Button.STATE.DOWN
     }
   }
-  else if (game.input.prev && this.contains(game.input.prev)) {
+  else if (this.game.input.prev && this.contains(this.game.input.prev)) {
     this.tapped()
-    game.input.prev = null
+    this.game.input.prev = null
   }
 }
 

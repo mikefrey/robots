@@ -1,4 +1,4 @@
-function TileSet(src, w, h, ox, oy) {
+var TileSet = module.exports = function(src, w, h, ox, oy) {
   this.width = w
   this.height = h
   this.offsetX = ox

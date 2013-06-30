@@ -1,0 +1,20 @@
+{
+  "name": "robots",
+  "version": "0.0.0",
+  "description": "robots",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mikefrey/robots.git"
+  },
+  "author": "Mike Frey <frey.mike@gmail.com>",
+  "license": "private",
+  "readmeFilename": "README.md",
+  "gitHead": "18a9c7c1058bd6968dbe13718ebaa837070697be",
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  }
+}

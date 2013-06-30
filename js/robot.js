@@ -1,4 +1,7 @@
-function Robot(pos) {
+var vector2 = require('./vector2')
+
+var Robot = module.exports = function(pos) {
+  this.game = require('./game').game
   this.pos = pos
   this.dir = { x:1, y:0 }
   this.queue = []
@@ -7,7 +10,7 @@ function Robot(pos) {
 }
 
 Robot.prototype.moveForward = function() {
-  var grid = game.level.grid
+  var grid = this.game.level.grid
   var newPos = vector2.add(this.pos, this.dir)
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
     this.block()
@@ -18,7 +21,7 @@ Robot.prototype.moveForward = function() {
 }
 
 Robot.prototype.moveBackward = function() {
-  var grid = game.level.grid
+  var grid = this.game.level.grid
   var newPos = vector2.subtract(this.pos, this.dir)
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
     this.block()
@@ -51,7 +54,7 @@ Robot.prototype.turnAround = function() {
 }
 
 Robot.prototype.pickup = function() {
-  var target = game.entityAt(vector2.add(this.pos, this.dir), Ball)
+  var target = this.game.entityAt(vector2.add(this.pos, this.dir), Ball)
   if (target && target.pickedUp()) {
     this.ball = target
   } else {
@@ -113,9 +116,9 @@ Robot.prototype.update = function() {
 }
 
 Robot.prototype.draw = function(ctx) {
-  var scale = game.scale
+  var scale = this.game.scale
 
-  isoCtx(ctx, function() {
+  this.game.isoCtx(ctx, function() {
 
     ctx.save()
     ctx.translate(

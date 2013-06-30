@@ -1,4 +1,6 @@
-function Exit(pos) {
+
+var Exit = module.exports = function(pos) {
+  this.game = require('./game').game
   this.pos = pos
 }
 
@@ -6,14 +8,12 @@ Exit.prototype.update = function() {
 }
 
 Exit.prototype.draw = function(ctx) {
-  var scale = game.scale
-  isoCtx(ctx, function() {
+  var scale = this.game.scale
+  this.game.isoCtx(ctx, function() {
     ctx.translate(
       this.pos.x * scale + scale / 2,
       this.pos.y * scale + scale / 2
     )
-
-    var radius = scale*0.3
 
     ctx.fillStyle = '#FFFFFF'
     ctx.beginPath()

@@ -1,4 +1,4 @@
-function Input(id) {
+var Input = module.exports = function(id) {
   var el = document.getElementById(id)
   el.addEventListener('touchstart', this.touchStart, false)
   el.addEventListener('touchmove', this.touchMove, false)
