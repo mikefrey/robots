@@ -1,5 +1,6 @@
+// var extendable = require('./lib/extendable')
 
-var Button = module.exports = function(pos, width, height, tile) {
+var Button = module.exports = function(pos, width, height, sprite) {
   this.game = require('./game').game
   this.pos = pos
   this.width = width
@@ -43,6 +44,8 @@ Button.prototype.contains = function(point) {
     this.pos.y + this.height < point.y
   )
 }
+
+// Button.extend = extendable
 
 Button.STATE = {
   NORMAL: 'normal',
