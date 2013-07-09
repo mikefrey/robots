@@ -31,6 +31,7 @@ game.start()
 var vector2 = require('./vector2')
 // var Level = require('./level')
 var Input = require('./input')
+var ButtonManager = require('./buttonManager')
 var Ball = require('./ball')
 var Switch = require('./switch')
 var Robot = require('./robot')
@@ -214,7 +215,7 @@ Game.prototype.d2r = d2r
 
 Game.prototype.r2d = r2d
 
-},{"./input":4,"./vector2":5,"./ball":6,"./switch":7,"./robot":8,"./exit":9}],3:[function(require,module,exports){
+},{"./ball":7,"./buttonManager":6,"./exit":10,"./input":5,"./robot":9,"./switch":8,"./vector2":4}],3:[function(require,module,exports){
 
 var Ball = require('./ball')
 var Switch = require('./switch')
@@ -314,38 +315,7 @@ Level.prototype.draw = function(ctx) {
 
 }
 
-},{"./ball":6,"./switch":7,"./robot":8,"./exit":9,"./tileset":10,"./game":2}],4:[function(require,module,exports){
-var Input = module.exports = function(id) {
-  var el = document.getElementById(id)
-  el.addEventListener('touchstart', this.touchStart, false)
-  el.addEventListener('touchmove', this.touchMove, false)
-  el.addEventListener('touchend', this.touchEnd, false)
-}
-
-
-Input.prototype.touchStart = function(ev) {
-  this.start = ev.touches[0]
-  this.touchMove(ev)
-  // this.previous = this.current
-  // this.current = ev.touches[0]
-  // this.current.x = this.current.screenX
-  // this.current.y = this.current.screenY
-}
-
-Input.prototype.touchMove = function(ev) {
-  this.previous = this.current
-  this.current = ev.touches[0]
-  this.current.x = this.current.screenX
-  this.current.y = this.current.screenY
-}
-
-Input.prototype.touchEnd = function(ev) {
-  this.previous = this.current
-  this.current = null
-  this.start = null
-}
-
-},{}],5:[function(require,module,exports){
+},{"./ball":7,"./exit":10,"./game":2,"./robot":9,"./switch":8,"./tileset":11}],4:[function(require,module,exports){
 module.exports = {
 
   equal: function(a, b) {
@@ -374,7 +344,38 @@ module.exports = {
 
 }
 
-},{}],10:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+var Input = module.exports = function(id) {
+  var el = document.getElementById(id)
+  el.addEventListener('touchstart', this.touchStart.bind(this), false)
+  el.addEventListener('touchmove', this.touchMove.bind(this), false)
+  el.addEventListener('touchend', this.touchEnd.bind(this), false)
+}
+
+
+Input.prototype.touchStart = function(ev) {
+  this.start = ev.touches[0]
+  this.touchMove(ev)
+  // this.previous = this.current
+  // this.current = ev.touches[0]
+  // this.current.x = this.current.screenX
+  // this.current.y = this.current.screenY
+}
+
+Input.prototype.touchMove = function(ev) {
+  this.previous = this.current
+  this.current = ev.touches[0]
+  this.current.x = this.current.screenX
+  this.current.y = this.current.screenY
+}
+
+Input.prototype.touchEnd = function(ev) {
+  this.previous = this.current
+  this.current = null
+  this.start = null
+}
+
+},{}],11:[function(require,module,exports){
 var TileSet = module.exports = function(src, w, h, ox, oy) {
   this.width = w
   this.height = h
@@ -413,7 +414,80 @@ TileSet.prototype.draw = function(ctx, t, x, y, w) {
 
 
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+var buttonDefs = require('./buttons')
+var Button = require('./button')
+// var Sprite = require('./sprite')
+
+var ButtonManager = module.exports = function() {
+  this.buttons = []
+  for (var key in buttonDefs) {
+    var btn = buttonDefs[key]
+    // var sprite = new Sprite(btn.sprite, btn.width, btn.height)
+    var button = new Button(btn.pos, btn.width, btn.height)
+    this.buttons.push[button]
+  }
+}
+
+ButtonManager.prototype.update = function() {
+  for (var i = 0; i < this.buttons.length; i+=1) {
+    this.buttons[i].update()
+  }
+}
+
+ButtonManager.prototype.draw = function(ctx) {
+  for (var i = 0; i < this.buttons.length; i+=1) {
+    this.buttons[i].draw(ctx)
+  }
+}
+
+},{"./button":13,"./buttons":12}],7:[function(require,module,exports){
+
+var Ball = module.exports = function(pos) {
+  this.game = require('./game').game
+  this.pos = pos
+}
+
+Ball.prototype.dropped = function() {
+  var target = this.game.entityAt(this.pos, Switch)
+  if (target) {
+    return target.turnOn(this)
+  }
+  return true
+}
+
+Ball.prototype.pickedUp = function() {
+  var target = this.game.entityAt(this.pos, Switch)
+  if (target) {
+    return target.turnOff(this)
+  }
+  return true
+}
+
+Ball.prototype.update = function() {
+
+}
+
+Ball.prototype.draw = function(ctx) {
+  var d2r = this.game.d2r
+  var scale = this.game.scale
+  this.game.isoCtx(ctx, function() {
+    ctx.translate(
+      this.pos.x * scale + scale / 2,
+      this.pos.y * scale + scale / 2
+    )
+
+    var radius = scale*0.3
+
+    ctx.fillStyle = '#7777FF'
+    ctx.beginPath()
+    ctx.arc(0, 0, radius, d2r(0), d2r(360))
+    ctx.fill()
+    ctx.stroke()
+  }.bind(this))
+}
+
+},{"./game":2}],8:[function(require,module,exports){
 
 var Switch = module.exports = function(pos) {
   this.game = require('./game').game
@@ -472,53 +546,7 @@ Switch.STATE = {
   OFF : 0
 }
 
-},{"./game":2}],6:[function(require,module,exports){
-
-var Ball = module.exports = function(pos) {
-  this.game = require('./game').game
-  this.pos = pos
-}
-
-Ball.prototype.dropped = function() {
-  var target = this.game.entityAt(this.pos, Switch)
-  if (target) {
-    return target.turnOn(this)
-  }
-  return true
-}
-
-Ball.prototype.pickedUp = function() {
-  var target = this.game.entityAt(this.pos, Switch)
-  if (target) {
-    return target.turnOff(this)
-  }
-  return true
-}
-
-Ball.prototype.update = function() {
-
-}
-
-Ball.prototype.draw = function(ctx) {
-  var d2r = this.game.d2r
-  var scale = this.game.scale
-  this.game.isoCtx(ctx, function() {
-    ctx.translate(
-      this.pos.x * scale + scale / 2,
-      this.pos.y * scale + scale / 2
-    )
-
-    var radius = scale*0.3
-
-    ctx.fillStyle = '#7777FF'
-    ctx.beginPath()
-    ctx.arc(0, 0, radius, d2r(0), d2r(360))
-    ctx.fill()
-    ctx.stroke()
-  }.bind(this))
-}
-
-},{"./game":2}],8:[function(require,module,exports){
+},{"./game":2}],9:[function(require,module,exports){
 var vector2 = require('./vector2')
 
 var Robot = module.exports = function(pos) {
@@ -669,7 +697,7 @@ Robot.prototype.draw = function(ctx) {
   return this
 }
 
-},{"./vector2":5,"./game":2}],9:[function(require,module,exports){
+},{"./game":2,"./vector2":4}],10:[function(require,module,exports){
 
 var Exit = module.exports = function(pos) {
   this.game = require('./game').game
@@ -687,8 +715,6 @@ Exit.prototype.draw = function(ctx) {
       this.pos.y * scale + scale / 2
     )
 
-    var radius = scale*0.3
-
     ctx.fillStyle = '#FFFFFF'
     ctx.beginPath()
     ctx.rect(
@@ -700,6 +726,114 @@ Exit.prototype.draw = function(ctx) {
     ctx.fill()
     ctx.stroke()
   }.bind(this))
+}
+
+},{"./game":2}],12:[function(require,module,exports){
+module.exports = {
+
+  forward: {
+    pos: { x:0, y:0 },
+    width:32,
+    height:32,
+    sprite: '',
+    command: 'moveForward'
+  },
+
+  backward: {
+    pos: { x:32, y:0 },
+    width:32,
+    height:32,
+    sprite: '',
+    command: 'moveBackward'
+  },
+
+  left: {
+    pos: { x:64, y:0 },
+    width:32,
+    height:32,
+    sprite: '',
+    command: 'turnLeft'
+  },
+
+  right: {
+    pos: { x:96, y:0 },
+    width:32,
+    height:32,
+    sprite: '',
+    command: 'turnRight'
+  },
+
+  pickup: {
+    pos: { x:128, y:0 },
+    width:32,
+    height:32,
+    sprite: '',
+    command: 'pickup'
+  },
+
+  release: {
+    pos: { x:154, y:0 },
+    width:32,
+    height:32,
+    sprite: '',
+    command: 'release'
+  }
+
+}
+
+},{}],13:[function(require,module,exports){
+// var extendable = require('./lib/extendable')
+
+var Button = module.exports = function(pos, width, height, sprite) {
+  this.game = require('./game').game
+  this.pos = pos
+  this.width = width
+  this.height = height
+  this.state = Button.STATE.NORMAL
+}
+
+Button.prototype.tapped = function() {}
+
+Button.prototype.update = function() {
+  this.state = Button.STATE.NORMAL
+  if (this.game.input.current) {
+    if (this.contains(this.game.input.current) && this.contains(this.game.input.start)) {
+      this.state = Button.STATE.DOWN
+    }
+  }
+  else if (this.game.input.prev && this.contains(this.game.input.prev)) {
+    this.tapped()
+    this.game.input.prev = null
+  }
+}
+
+Button.prototype.draw = function(ctx) {
+  ctx.save()
+  ctx.translate(this.pos.x, this.pos.y)
+
+  ctx.beginPath()
+  ctx.lineStyle = '#000000'
+  ctx.lineWidth = 2
+  ctx.rect(0, 0, this.width, this.height)
+  ctx.stroke()
+
+  ctx.restore()
+}
+
+Button.prototype.contains = function(point) {
+  return !(
+    this.pos.x > point.x ||
+    this.pos.x + this.width < point.x ||
+    this.pos.y > point.y ||
+    this.pos.y + this.height < point.y
+  )
+}
+
+// Button.extend = extendable
+
+Button.STATE = {
+  NORMAL: 'normal',
+  DOWN: 'down'
 }
 
 },{"./game":2}]},{},[1])
