@@ -1,4 +1,5 @@
 var vector2 = require('./vector2')
+var pubsub = require('./lib/pubsub')
 
 var Robot = module.exports = function(pos) {
   this.game = require('./game').game
@@ -7,6 +8,8 @@ var Robot = module.exports = function(pos) {
   this.queue = []
   this.freq = 400
   this.blocked = false
+
+  pubsub.on('commandButtonPressed', this.enqueue.bind(this))
 }
 
 Robot.prototype.moveForward = function() {
@@ -83,6 +86,7 @@ Robot.prototype.block = function() {
 }
 
 Robot.prototype.enqueue = function(fname) {
+  if (fname === 'start') return this.start()
   if (typeof this[fname] == 'function')
     this.queue.push(fname)
 }

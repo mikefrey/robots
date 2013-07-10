@@ -9,14 +9,13 @@ document.body.appendChild( stats.domElement );
 var Game = require('./game')
 var Level = require('./level')
 
-var game = new Game({
+var game = window.game = new Game({
   scale: 64,
   width: 1024,
   height: 768,
   gridSize: 10,
   topMargin: 150,
-  canvas: 'game',
-  bgcanvas: 'bg'
+  canvas: 'game'
 })
 
 game.loadLevel(Level)
@@ -59,9 +58,10 @@ var Game = module.exports = function(opts) {
 
   // setup the canvases
   this.ctx = this.initCanvas(opts.canvas, width, height)
-  this.bgctx = this.initCanvas(opts.bgcanvas, width, height)
+  // this.bgctx = this.initCanvas(opts.bgcanvas, width, height)
 
   this.input = new Input(opts.canvas)
+  this.buttonManager = new ButtonManager()
 }
 
 Game.prototype.loadLevel = function(Level) {
@@ -94,6 +94,7 @@ Game.prototype.loop = function() {
 
 // update all the things
 Game.prototype.update = function() {
+  this.buttonManager.update()
   for (var i = 0; i < this.entities.length; i+=1) {
     this.entities[i].update()
   }
@@ -102,9 +103,9 @@ Game.prototype.update = function() {
 // draw all the things
 Game.prototype.draw = function() {
   this.ctx.clearRect(0, 0, this.width, this.height)
-  this.bgctx.clearRect(0, 0, this.width, this.height)
+  // this.bgctx.clearRect(0, 0, this.width, this.height)
   // draw the level
-  this.level.draw(this.bgctx)
+  this.level.draw(this.ctx)
   // draw each entity
   var ent, i
   for (i = 0; i < this.entities.length; i+=1) {
@@ -119,6 +120,9 @@ Game.prototype.draw = function() {
     ent = this.entities[i]
     if (ent instanceof Ball) ent.draw(this.ctx)
   }
+
+  // draw any UI last
+  this.buttonManager.draw(this.ctx)
 }
 
 // get the entity at the given position
@@ -356,21 +360,20 @@ var Input = module.exports = function(id) {
 Input.prototype.touchStart = function(ev) {
   this.start = ev.touches[0]
   this.touchMove(ev)
-  // this.previous = this.current
-  // this.current = ev.touches[0]
-  // this.current.x = this.current.screenX
-  // this.current.y = this.current.screenY
 }
 
 Input.prototype.touchMove = function(ev) {
   this.previous = this.current
   this.current = ev.touches[0]
-  this.current.x = this.current.screenX
-  this.current.y = this.current.screenY
+  this.current.x = this.current.clientX
+  this.current.y = this.current.clientY
 }
 
 Input.prototype.touchEnd = function(ev) {
-  this.previous = this.current
+  this.previous = {
+    start: this.start,
+    end: this.current
+  }
   this.current = null
   this.start = null
 }
@@ -423,9 +426,10 @@ var ButtonManager = module.exports = function() {
   this.buttons = []
   for (var key in buttonDefs) {
     var btn = buttonDefs[key]
-    // var sprite = new Sprite(btn.sprite, btn.width, btn.height)
+    // btn.sprite = new Sprite(btn.sprite, btn.width, btn.height)
     var button = new Button(btn.pos, btn.width, btn.height)
-    this.buttons.push[button]
+    var button = new Button(btn)
+    this.buttons.push(button)
   }
 }
 
@@ -548,6 +552,7 @@ Switch.STATE = {
 
 },{"./game":2}],9:[function(require,module,exports){
 var vector2 = require('./vector2')
+var pubsub = require('./lib/pubsub')
 
 var Robot = module.exports = function(pos) {
   this.game = require('./game').game
@@ -556,6 +561,8 @@ var Robot = module.exports = function(pos) {
   this.queue = []
   this.freq = 400
   this.blocked = false
+
+  pubsub.on('commandButtonPressed', this.enqueue.bind(this))
 }
 
 Robot.prototype.moveForward = function() {
@@ -632,6 +639,7 @@ Robot.prototype.block = function() {
 }
 
 Robot.prototype.enqueue = function(fname) {
+  if (fname === 'start') return this.start()
   if (typeof this[fname] == 'function')
     this.queue.push(fname)
 }
@@ -697,7 +705,7 @@ Robot.prototype.draw = function(ctx) {
   return this
 }
 
-},{"./game":2,"./vector2":4}],10:[function(require,module,exports){
+},{"./game":2,"./lib/pubsub":14,"./vector2":4}],10:[function(require,module,exports){
 
 var Exit = module.exports = function(pos) {
   this.game = require('./game').game
@@ -733,77 +741,166 @@ module.exports = {
 
   forward: {
     pos: { x:0, y:0 },
-    width:32,
-    height:32,
+    width:80,
+    height:80,
     sprite: '',
     command: 'moveForward'
   },
 
   backward: {
-    pos: { x:32, y:0 },
-    width:32,
-    height:32,
+    pos: { x:80, y:0 },
+    width:80,
+    height:80,
     sprite: '',
     command: 'moveBackward'
   },
 
   left: {
-    pos: { x:64, y:0 },
-    width:32,
-    height:32,
+    pos: { x:170, y:0 },
+    width:80,
+    height:80,
     sprite: '',
     command: 'turnLeft'
   },
 
   right: {
-    pos: { x:96, y:0 },
-    width:32,
-    height:32,
+    pos: { x:250, y:0 },
+    width:80,
+    height:80,
     sprite: '',
     command: 'turnRight'
   },
 
   pickup: {
-    pos: { x:128, y:0 },
-    width:32,
-    height:32,
+    pos: { x:340, y:0 },
+    width:80,
+    height:80,
     sprite: '',
     command: 'pickup'
   },
 
   release: {
-    pos: { x:154, y:0 },
-    width:32,
-    height:32,
+    pos: { x:420, y:0 },
+    width:80,
+    height:80,
     sprite: '',
     command: 'release'
+  },
+
+  start: {
+    pos: { x:540, y:0 },
+    width:80,
+    height:80,
+    sprite: '',
+    command: 'start'
   }
 
+}
+
+},{}],14:[function(require,module,exports){
+var d = module.exports = {}
+
+// the topic/subscription hash
+var cache = d.c_ || {} //check for "c_" cache for unit testing
+
+d.trigger = function(/* String */ topic, /* Array? */ args) {
+  // summary:
+  //    Publish some data on a named topic.
+  // topic: String
+  //    The channel to publish on
+  // args: Array?
+  //    The data to publish. Each array item is converted into an ordered
+  //    arguments on the subscribed functions.
+  //
+  // example:
+  //    Publish stuff on '/some/topic'. Anything subscribed will be called
+  //    with a function signature like: function(a,b,c) { ... }
+  //
+  //    trigger("/some/topic", ["a","b","c"])
+
+  var subs = cache[topic],
+    len = subs ? subs.length : 0
+
+  //can change loop or reverse array if the order matters
+  while (len--) {
+    subs[len].apply(d, args || [])
+  }
+}
+
+d.on = function(/* String */ topic, /* Function */ callback) {
+  // summary:
+  //    Register a callback on a named topic.
+  // topic: String
+  //    The channel to subscribe to
+  // callback: Function
+  //    The handler event. Anytime something is trigger'ed on a
+  //    subscribed channel, the callback will be called with the
+  //    published array as ordered arguments.
+  //
+  // returns: Array
+  //    A handle which can be used to unsubscribe this particular subscription.
+  //
+  // example:
+  //    on("/some/topic", function(a, b, c) { /* handle data */ })
+
+  if (!cache[topic]) {
+    cache[topic] = []
+  }
+  cache[topic].push(callback)
+  return [topic, callback] // Array
+}
+
+d.off = function(/* Array or String */ handle) {
+  // summary:
+  //    Disconnect a subscribed function for a topic.
+  // handle: Array or String
+  //    The return value from an `on` call.
+  // example:
+  //    var handle = on("/some/topic", function() {})
+  //    off(handle)
+
+  var subs = cache[typeof handle === 'string' ? handle : handle[0]]
+  var callback = typeof handle === 'string' ? handle[1] : false
+  var len = subs ? subs.length : 0
+
+  while (len--) {
+    if (subs[len] === callback || !callback) {
+      subs.splice(len, 1)
+    }
+  }
 }
 
 },{}],13:[function(require,module,exports){
-// var extendable = require('./lib/extendable')
+var pubsub = require('./lib/pubsub')
 
-var Button = module.exports = function(pos, width, height, sprite) {
+var Button = module.exports = function(btn) {
   this.game = require('./game').game
-  this.pos = pos
-  this.width = width
-  this.height = height
+  // copy over the btn properties
+  for (var k in btn) {
+    this[k] = btn[k]
+  }
   this.state = Button.STATE.NORMAL
 }
 
-Button.prototype.tapped = function() {}
+Button.prototype.tapped = function() {
+  console.log('TAPPED', this.command)
+  pubsub.trigger('commandButtonPressed', [this.command])
+}
 
 Button.prototype.update = function() {
   this.state = Button.STATE.NORMAL
-  if (this.game.input.current) {
-    if (this.contains(this.game.input.current) && this.contains(this.game.input.start)) {
+  var start = this.game.input.start
+  var current = this.game.input.current
+  var previous = this.game.input.previous
+
+  if (current) {
+    if (this.contains(current) && this.contains(start)) {
       this.state = Button.STATE.DOWN
     }
   }
-  else if (this.game.input.prev && this.contains(this.game.input.prev)) {
+  else if (previous && this.contains(previous.end) && this.contains(previous.start)) {
     this.tapped()
-    this.game.input.prev = null
+    this.game.input.previous = null
   }
 }
 
@@ -829,12 +926,10 @@ Button.prototype.contains = function(point) {
   )
 }
 
-// Button.extend = extendable
-
 Button.STATE = {
   NORMAL: 'normal',
   DOWN: 'down'
 }
 
-},{"./game":2}]},{},[1])
+},{"./game":2,"./lib/pubsub":14}]},{},[1])
 ;

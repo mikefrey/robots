@@ -1,25 +1,33 @@
-// var extendable = require('./lib/extendable')
+var pubsub = require('./lib/pubsub')
 
-var Button = module.exports = function(pos, width, height, sprite) {
+var Button = module.exports = function(btn) {
   this.game = require('./game').game
-  this.pos = pos
-  this.width = width
-  this.height = height
+  // copy over the btn properties
+  for (var k in btn) {
+    this[k] = btn[k]
+  }
   this.state = Button.STATE.NORMAL
 }
 
-Button.prototype.tapped = function() {}
+Button.prototype.tapped = function() {
+  console.log('TAPPED', this.command)
+  pubsub.trigger('commandButtonPressed', [this.command])
+}
 
 Button.prototype.update = function() {
   this.state = Button.STATE.NORMAL
-  if (this.game.input.current) {
-    if (this.contains(this.game.input.current) && this.contains(this.game.input.start)) {
+  var start = this.game.input.start
+  var current = this.game.input.current
+  var previous = this.game.input.previous
+
+  if (current) {
+    if (this.contains(current) && this.contains(start)) {
       this.state = Button.STATE.DOWN
     }
   }
-  else if (this.game.input.prev && this.contains(this.game.input.prev)) {
+  else if (previous && this.contains(previous.end) && this.contains(previous.start)) {
     this.tapped()
-    this.game.input.prev = null
+    this.game.input.previous = null
   }
 }
 
@@ -44,8 +52,6 @@ Button.prototype.contains = function(point) {
     this.pos.y + this.height < point.y
   )
 }
-
-// Button.extend = extendable
 
 Button.STATE = {
   NORMAL: 'normal',

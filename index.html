@@ -5,6 +5,7 @@
   <style>
     canvas.game { position:absolute; top:0; left:0; border:2px solid black; }
     span.spacer { padding-left:30px; }
+    .pause { position:absolute; top:0; left:1050px; }
   </style>
 </head>
 <body>
@@ -23,10 +24,10 @@
 
     <button id="start">Start</button>
   </div> -->
-  <canvas class="game" id="bg" width="1024" height="768"></canvas>
   <canvas class="game" id="game" width="1024" height="768"></canvas>
-  <!-- <canvas id="bg" width="2048" height="1536"></canvas>
-  <canvas id="game" width="2048" height="1536"></canvas> -->
+  <!-- <canvas id="game" width="2048" height="1536"></canvas> -->
+
+  <button class="pause" onclick="window.game.pause();">pause</button>
 
   <script src="js/lib/stats.js"></script>
   <script src="js/lib/touche.js"></script>
@@ -41,6 +42,6 @@
   <script src="js/game.js"></script>
   <script src="js/script.js"></script>-->
   <!-- <script src="js/ui.js"></script> -->
-  <script src="js/bundle.js"></script>
+  <script src="./bundle.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 var vector2 = require('./vector2')
 // var Level = require('./level')
 var Input = require('./input')
+var ButtonManager = require('./buttonManager')
 var Ball = require('./ball')
 var Switch = require('./switch')
 var Robot = require('./robot')
@@ -28,9 +29,10 @@ var Game = module.exports = function(opts) {
 
   // setup the canvases
   this.ctx = this.initCanvas(opts.canvas, width, height)
-  this.bgctx = this.initCanvas(opts.bgcanvas, width, height)
+  // this.bgctx = this.initCanvas(opts.bgcanvas, width, height)
 
   this.input = new Input(opts.canvas)
+  this.buttonManager = new ButtonManager()
 }
 
 Game.prototype.loadLevel = function(Level) {
@@ -63,6 +65,7 @@ Game.prototype.loop = function() {
 
 // update all the things
 Game.prototype.update = function() {
+  this.buttonManager.update()
   for (var i = 0; i < this.entities.length; i+=1) {
     this.entities[i].update()
   }
@@ -71,9 +74,9 @@ Game.prototype.update = function() {
 // draw all the things
 Game.prototype.draw = function() {
   this.ctx.clearRect(0, 0, this.width, this.height)
-  this.bgctx.clearRect(0, 0, this.width, this.height)
+  // this.bgctx.clearRect(0, 0, this.width, this.height)
   // draw the level
-  this.level.draw(this.bgctx)
+  this.level.draw(this.ctx)
   // draw each entity
   var ent, i
   for (i = 0; i < this.entities.length; i+=1) {
@@ -88,6 +91,9 @@ Game.prototype.draw = function() {
     ent = this.entities[i]
     if (ent instanceof Ball) ent.draw(this.ctx)
   }
+
+  // draw any UI last
+  this.buttonManager.draw(this.ctx)
 }
 
 // get the entity at the given position

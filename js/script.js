@@ -8,14 +8,13 @@ document.body.appendChild( stats.domElement );
 var Game = require('./game')
 var Level = require('./level')
 
-var game = new Game({
+var game = window.game = new Game({
   scale: 64,
   width: 1024,
   height: 768,
   gridSize: 10,
   topMargin: 150,
-  canvas: 'game',
-  bgcanvas: 'bg'
+  canvas: 'game'
 })
 
 game.loadLevel(Level)
