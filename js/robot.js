@@ -1,6 +1,8 @@
 var vector2 = require('./vector2')
 var pubsub = require('./lib/pubsub')
 
+var Ball = require('./ball')
+
 var Robot = module.exports = function(pos) {
   this.game = require('./game').game
   this.pos = pos

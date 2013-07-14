@@ -554,6 +554,8 @@ Switch.STATE = {
 var vector2 = require('./vector2')
 var pubsub = require('./lib/pubsub')
 
+var Ball = require('./ball')
+
 var Robot = module.exports = function(pos) {
   this.game = require('./game').game
   this.pos = pos
@@ -705,7 +707,7 @@ Robot.prototype.draw = function(ctx) {
   return this
 }
 
-},{"./game":2,"./lib/pubsub":14,"./vector2":4}],10:[function(require,module,exports){
+},{"./ball":7,"./game":2,"./lib/pubsub":14,"./vector2":4}],10:[function(require,module,exports){
 
 var Exit = module.exports = function(pos) {
   this.game = require('./game').game
