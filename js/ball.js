@@ -1,3 +1,4 @@
+var Switch = require('./switch')
 
 var Ball = module.exports = function(pos) {
   this.game = require('./game').game

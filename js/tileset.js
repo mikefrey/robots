@@ -1,20 +1,17 @@
+var pubsub = require('./lib/pubsub')
+var Texture = require('./texture')
+
 var TileSet = module.exports = function(src, w, h, ox, oy) {
   this.width = w
   this.height = h
   this.offsetX = ox
   this.offsetY = oy
-  this.isLoaded = false
-  this.load(src)
+
+  this.texture = new Texture(src)
+  this.echo('load', this.texture)
 }
 
-TileSet.prototype.load = function(src) {
-  var img = this.img = new Image()
-  img.onload = function() {
-    this.isLoaded = true
-    if (this.onload) this.onload()
-  }.bind(this)
-  img.src = src
-}
+pubsub.extend(TileSet.prototype)
 
 TileSet.prototype.draw = function(ctx, t, x, y, w) {
   var sx = t * this.width
@@ -31,7 +28,7 @@ TileSet.prototype.draw = function(ctx, t, x, y, w) {
   var dx = x - dw*0.5
   var dy = y - this.offsetY * scaler
 
-  ctx.drawImage(this.img, sx, sy, sw, sh, dx, dy, dw, dh)
+  ctx.drawImage(this.texture.img, sx, sy, sw, sh, dx, dy, dw, dh)
 }
 
 

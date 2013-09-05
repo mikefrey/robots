@@ -1,13 +1,19 @@
 var buttonDefs = require('./buttons')
 var Button = require('./button')
-// var Sprite = require('./sprite')
+var Sprite = require('./sprite')
 
 var ButtonManager = module.exports = function() {
+  this.sprites = {}
+  for (var key in buttonDefs.sprites) {
+    var spr = buttonDefs.sprites[key]
+    var sprite = new Sprite(spr)
+    this.sprites[key] = sprite
+  }
+
   this.buttons = []
-  for (var key in buttonDefs) {
-    var btn = buttonDefs[key]
-    // btn.sprite = new Sprite(btn.sprite, btn.width, btn.height)
-    var button = new Button(btn.pos, btn.width, btn.height)
+  for (var key in buttonDefs.buttons) {
+    var btn = buttonDefs.buttons[key]
+    btn.sprite = this.sprites[btn.sprite]
     var button = new Button(btn)
     this.buttons.push(button)
   }

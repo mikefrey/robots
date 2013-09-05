@@ -1,9 +1,8 @@
-var d = module.exports = {}
+var extend = require('./extend')
 
-// the topic/subscription hash
-var cache = d.c_ || {} //check for "c_" cache for unit testing
+var Events = {}
 
-d.trigger = function(/* String */ topic, /* Array? */ args) {
+Events.trigger = function(/* String */ topic, /* Array? */ args) {
   // summary:
   //    Publish some data on a named topic.
   // topic: String
@@ -17,17 +16,18 @@ d.trigger = function(/* String */ topic, /* Array? */ args) {
   //    with a function signature like: function(a,b,c) { ... }
   //
   //    trigger("/some/topic", ["a","b","c"])
+  if (!this._events) return
 
-  var subs = cache[topic],
+  var subs = this._events[topic],
     len = subs ? subs.length : 0
 
   //can change loop or reverse array if the order matters
   while (len--) {
-    subs[len].apply(d, args || [])
+    subs[len].apply(Events, args || [])
   }
 }
 
-d.on = function(/* String */ topic, /* Function */ callback) {
+Events.on = function(/* String */ topic, /* Function */ callback) {
   // summary:
   //    Register a callback on a named topic.
   // topic: String
@@ -43,14 +43,16 @@ d.on = function(/* String */ topic, /* Function */ callback) {
   // example:
   //    on("/some/topic", function(a, b, c) { /* handle data */ })
 
-  if (!cache[topic]) {
-    cache[topic] = []
+  this._events || (this._events = {})
+
+  if (!this._events[topic]) {
+    this._events[topic] = []
   }
-  cache[topic].push(callback)
+  this._events[topic].push(callback)
   return [topic, callback] // Array
 }
 
-d.off = function(/* Array or String */ handle) {
+Events.off = function(/* Array or String */ handle) {
   // summary:
   //    Disconnect a subscribed function for a topic.
   // handle: Array or String
@@ -58,8 +60,9 @@ d.off = function(/* Array or String */ handle) {
   // example:
   //    var handle = on("/some/topic", function() {})
   //    off(handle)
+  if (!this._events) return
 
-  var subs = cache[typeof handle === 'string' ? handle : handle[0]]
+  var subs = this._events[typeof handle === 'string' ? handle : handle[0]]
   var callback = typeof handle === 'string' ? handle[1] : false
   var len = subs ? subs.length : 0
 
@@ -69,3 +72,18 @@ d.off = function(/* Array or String */ handle) {
     }
   }
 }
+
+Events.echo = function(/* String */ topic, /* Object */ emitter) {
+  emitter.on(topic, function() {
+    this.trigger(topic, arguments)
+  }.bind(this))
+}
+
+
+var pubsub = module.exports = {}
+
+pubsub.Events = Events
+pubsub.extend = function(obj) {
+  extend(obj, Events)
+}
+pubsub.extend(pubsub)

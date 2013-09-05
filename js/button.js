@@ -10,7 +10,6 @@ var Button = module.exports = function(btn) {
 }
 
 Button.prototype.tapped = function() {
-  console.log('TAPPED', this.command)
   pubsub.trigger('commandButtonPressed', [this.command])
 }
 
@@ -35,11 +34,14 @@ Button.prototype.draw = function(ctx) {
   ctx.save()
   ctx.translate(this.pos.x, this.pos.y)
 
-  ctx.beginPath()
-  ctx.lineStyle = '#000000'
-  ctx.lineWidth = 2
-  ctx.rect(0, 0, this.width, this.height)
-  ctx.stroke()
+  // ctx.beginPath()
+  // ctx.lineStyle = '#000000'
+  // ctx.lineWidth = 2
+  // ctx.rect(0, 0, this.width, this.height)
+  // ctx.stroke()
+
+  var rect = { x:0, y:0, w:this.width, h:this.height }
+  this.sprite.draw(ctx, this.frameOff, rect)
 
   ctx.restore()
 }

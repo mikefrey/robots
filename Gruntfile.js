@@ -3,7 +3,10 @@ module.exports = function(grunt) {
     browserify: {
       bundle: {
         src: ['js/script.js'],
-        dest: 'bundle.js'
+        dest: 'bundle.js',
+        options: {
+          debug:true
+        }
       }
     },
     watch: {
