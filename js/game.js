@@ -91,6 +91,10 @@ Game.prototype.draw = function() {
     ent = this.entities[i]
     if (ent instanceof Ball) ent.draw(this.ctx)
   }
+  for (i = 0; i < this.entities.length; i+=1) {
+    ent = this.entities[i]
+    if (ent instanceof Exit) ent.draw(this.ctx)
+  }
 
   // draw any UI last
   this.buttonManager.draw(this.ctx)
