@@ -1,12 +1,12 @@
 var Switch = require('./switch')
 
-var Ball = module.exports = function(pos) {
+var Ball = module.exports = function Ball(pos) {
   this.game = require('./game').game
   this.pos = pos
 }
 
 Ball.prototype.dropped = function() {
-  var target = this.game.entityAt(this.pos, Switch)
+  var target = this.game.entityAt(this.pos, Switch.name)
   if (target) {
     return target.turnOn(this)
   }
@@ -14,7 +14,7 @@ Ball.prototype.dropped = function() {
 }
 
 Ball.prototype.pickedUp = function() {
-  var target = this.game.entityAt(this.pos, Switch)
+  var target = this.game.entityAt(this.pos, Switch.name)
   if (target) {
     return target.turnOff(this)
   }

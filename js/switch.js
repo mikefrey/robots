@@ -1,5 +1,5 @@
 
-var Switch = module.exports = function(pos) {
+var Switch = module.exports = function Switch(pos) {
   this.game = require('./game').game
   this.pos = pos
   this.state = Switch.STATE.OFF

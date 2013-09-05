@@ -3,7 +3,7 @@ var pubsub = require('./lib/pubsub')
 
 var Ball = require('./ball')
 
-var Robot = module.exports = function(pos) {
+var Robot = module.exports = function Robot(pos) {
   this.game = require('./game').game
   this.pos = pos
   this.dir = { x:1, y:0 }
@@ -59,7 +59,7 @@ Robot.prototype.turnAround = function() {
 }
 
 Robot.prototype.pickup = function() {
-  var target = this.game.entityAt(vector2.add(this.pos, this.dir), Ball)
+  var target = this.game.entityAt(vector2.add(this.pos, this.dir), Ball.name)
   if (target && target.pickedUp()) {
     this.ball = target
   } else {

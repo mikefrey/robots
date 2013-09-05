@@ -2,6 +2,8 @@ var vector2 = require('./vector2')
 // var Level = require('./level')
 var Input = require('./input')
 var ButtonManager = require('./buttonManager')
+
+var EntityManager = require('./entityManager')
 var Ball = require('./ball')
 var Switch = require('./switch')
 var Robot = require('./robot')
@@ -66,9 +68,10 @@ Game.prototype.loop = function() {
 // update all the things
 Game.prototype.update = function() {
   this.buttonManager.update()
-  for (var i = 0; i < this.entities.length; i+=1) {
-    this.entities[i].update()
-  }
+  this.entities.invoke('update', [this.ctx], 'Robot')
+  this.entities.invoke('update', [this.ctx], 'Ball')
+  this.entities.invoke('update', [this.ctx], 'Switch')
+  this.entities.invoke('update', [this.ctx], 'Exit')
 }
 
 // draw all the things
@@ -77,24 +80,12 @@ Game.prototype.draw = function() {
   // this.bgctx.clearRect(0, 0, this.width, this.height)
   // draw the level
   this.level.draw(this.ctx)
+
   // draw each entity
-  var ent, i
-  for (i = 0; i < this.entities.length; i+=1) {
-    ent = this.entities[i]
-    if (ent instanceof Switch) ent.draw(this.ctx)
-  }
-  for (i = 0; i < this.entities.length; i+=1) {
-    ent = this.entities[i]
-    if (ent instanceof Robot) ent.draw(this.ctx)
-  }
-  for (i = 0; i < this.entities.length; i+=1) {
-    ent = this.entities[i]
-    if (ent instanceof Ball) ent.draw(this.ctx)
-  }
-  for (i = 0; i < this.entities.length; i+=1) {
-    ent = this.entities[i]
-    if (ent instanceof Exit) ent.draw(this.ctx)
-  }
+  this.entities.invoke('draw', [this.ctx], 'Exit')
+  this.entities.invoke('draw', [this.ctx], 'Switch')
+  this.entities.invoke('draw', [this.ctx], 'Robot')
+  this.entities.invoke('draw', [this.ctx], 'Ball')
 
   // draw any UI last
   this.buttonManager.draw(this.ctx)
@@ -102,19 +93,16 @@ Game.prototype.draw = function() {
 
 // get the entity at the given position
 Game.prototype.entityAt = function(pos, type) {
-  var entities = this.entities
-  for (var i = 0; i < entities.length; i+=1) {
-    var ent = entities[i]
-    if (vector2.equal(ent.pos, pos) && ent instanceof type) {
-      return ent
-    }
-  }
-  return null
+  return this.entities.atPos(pos, type)
+}
+
+Game.prototype.entitiesOfType = function(type) {
+  return this.entities.ofType(type)
 }
 
 // load the entities from the level
 Game.prototype.loadEntities = function() {
-  var ents = this.entities = []
+  var ents = this.entities = new EntityManager()
   var map = this.level.entityMap
   for (var y = 0; y < map.length; y+=1) {
     for (var x = 0; x < map[y].length; x+=1) {
@@ -125,7 +113,7 @@ Game.prototype.loadEntities = function() {
         // check to see if it's the robot
         if (ent instanceof Robot) this.robot = ent
         // add it to the entity collection
-        ents.push(ent)
+        ents.add(Ent.name, ent)
       }
     }
   }

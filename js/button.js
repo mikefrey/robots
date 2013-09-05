@@ -1,6 +1,6 @@
 var pubsub = require('./lib/pubsub')
 
-var Button = module.exports = function(btn) {
+var Button = module.exports = function Button(btn) {
   this.game = require('./game').game
   // copy over the btn properties
   for (var k in btn) {

@@ -1,6 +1,6 @@
 var Switch = require('./switch')
 
-var Exit = module.exports = function(pos) {
+var Exit = module.exports = function Exit(pos) {
   this.game = require('./game').game
   this.pos = pos
 }
@@ -40,10 +40,11 @@ Exit.prototype.draw = function(ctx) {
 }
 
 Exit.prototype.allSwitchesOn = function() {
-  if (!game.entities || !game.entities.length) return true
+  var ents = game.entitiesOfType(Switch.name)
+  if (!ents || !ents.length) return true
 
-  for (var i = 0; i < game.entities.length; i+=1) {
-    if (game.entities[i] instanceof Switch && game.entities[i].state === Switch.STATE.OFF)
+  for (var i = 0; i < ents.length; i+=1) {
+    if (ents[i].state === Switch.STATE.OFF)
       return false
   }
 
