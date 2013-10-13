@@ -34,14 +34,9 @@ Button.prototype.draw = function(ctx) {
   ctx.save()
   ctx.translate(this.pos.x, this.pos.y)
 
-  // ctx.beginPath()
-  // ctx.lineStyle = '#000000'
-  // ctx.lineWidth = 2
-  // ctx.rect(0, 0, this.width, this.height)
-  // ctx.stroke()
-
   var rect = { x:0, y:0, w:this.width, h:this.height }
-  this.sprite.draw(ctx, this.frameOff, rect)
+  var frame = this.state == Button.STATE.NORMAL ? this.frameOff : this.frameOn
+  this.sprite.draw(ctx, frame, rect)
 
   ctx.restore()
 }
