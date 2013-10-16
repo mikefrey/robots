@@ -7,11 +7,12 @@ var Robot = module.exports = function Robot(pos) {
   this.game = require('./game').game
   this.pos = pos
   this.dir = { x:1, y:0 }
-  this.queue = []
+  this.queue = this.game.queueManager
   this.freq = 400
   this.blocked = false
 
-  pubsub.on('commandButtonPressed', this.enqueue.bind(this))
+  // pubsub.on('commandButtonPressed', this.enqueue.bind(this))
+  pubsub.on('robotStart', this.start.bind(this))
 }
 
 Robot.prototype.moveForward = function() {
@@ -87,11 +88,12 @@ Robot.prototype.block = function() {
   this.blocked = true
 }
 
-Robot.prototype.enqueue = function(fname) {
-  if (fname === 'start') return this.start()
-  if (typeof this[fname] == 'function')
-    this.queue.push(fname)
-}
+// Robot.prototype.enqueue = function(btn) {
+//   var fname = btn.command
+//   if (fname === 'start') return this.start()
+//   if (typeof this[fname] == 'function')
+//     this.queue.push(fname)
+// }
 
 Robot.prototype.start = function() {
   this.step()
@@ -104,15 +106,15 @@ Robot.prototype.stop = function() {
 }
 
 Robot.prototype.step = function() {
-  if (this.queue.length == 0) {
+  if (this.queue.count() == 0) {
     return
   }
   if (this.blocked) {
-    this.queue = []
+    this.queue.reset()
     return
   }
 
-  var action = this.queue.shift()
+  var action = this.queue.pop()
   this[action]()
   this.moveBall()
   this.timeout = setTimeout(this.step.bind(this), this.freq)

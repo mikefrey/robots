@@ -2,6 +2,7 @@ var vector2 = require('./vector2')
 // var Level = require('./level')
 var Input = require('./input')
 var ButtonManager = require('./buttonManager')
+var QueueManager = require('./queueManager')
 
 var EntityManager = require('./entityManager')
 var Ball = require('./ball')
@@ -35,6 +36,7 @@ var Game = module.exports = function(opts) {
 
   this.input = new Input(opts.canvas)
   this.buttonManager = new ButtonManager()
+  this.queueManager = new QueueManager()
 }
 
 Game.prototype.loadLevel = function(Level) {
@@ -68,6 +70,7 @@ Game.prototype.loop = function() {
 // update all the things
 Game.prototype.update = function() {
   this.buttonManager.update()
+  this.queueManager.update()
   this.entities.invoke('update', [this.ctx], 'Robot')
   this.entities.invoke('update', [this.ctx], 'Ball')
   this.entities.invoke('update', [this.ctx], 'Switch')
@@ -89,6 +92,7 @@ Game.prototype.draw = function() {
 
   // draw any UI last
   this.buttonManager.draw(this.ctx)
+  this.queueManager.draw(this.ctx)
 }
 
 // get the entity at the given position

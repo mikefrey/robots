@@ -3,14 +3,14 @@ var pubsub = require('./lib/pubsub')
 var Button = module.exports = function Button(btn) {
   this.game = require('./game').game
   // copy over the btn properties
-  for (var k in btn) {
+  for (var k in btn) if (btn.hasOwnProperty(k)) {
     this[k] = btn[k]
   }
   this.state = Button.STATE.NORMAL
 }
 
 Button.prototype.tapped = function() {
-  pubsub.trigger('commandButtonPressed', [this.command])
+  pubsub.trigger('commandButtonPressed', [this])
 }
 
 Button.prototype.update = function() {
