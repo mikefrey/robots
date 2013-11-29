@@ -6,7 +6,6 @@ stats.domElement.style.top = '0px';
 document.body.appendChild( stats.domElement );
 
 var Game = require('./game')
-var Level = require('./level')
 
 var game = window.game = new Game({
   scale: 64,
@@ -17,7 +16,7 @@ var game = window.game = new Game({
   canvas: 'game'
 })
 
-game.loadLevel(Level)
+game.loadLevel(0)
 
 game.start()
 

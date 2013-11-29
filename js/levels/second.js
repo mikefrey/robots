@@ -5,7 +5,7 @@ var R = 'R'
 var E = 'E'
 
 module.exports = {
-  name: 'First Level',
+  name: 'Second Level',
 
   tiles: {
     src: 'images/isotiles.png',
@@ -18,12 +18,16 @@ module.exports = {
   grid: [
     [6,6,6,6,6],
     [6,6,6,6,6],
-    [6,6,6,6,6]
+    [6,6,6,6,6],
+    [_,_,_,6,6],
+    [6,6,_,6,6]
   ],
 
   entityMap: [
-    [_,_,B,_,_],
-    [R,_,_,_,S],
-    [_,_,E,_,_]
+    [_,_,_,_,_],
+    [_,R,_,B,_],
+    [_,_,_,_,E],
+    [_,_,S,_,_],
+    [_,_,_,_,_]
   ]
 }

@@ -16,7 +16,7 @@ var Robot = module.exports = function Robot(pos) {
 }
 
 Robot.prototype.moveForward = function() {
-  var grid = this.game.level.grid
+  var grid = this.game.levelManager.current.grid
   var newPos = vector2.add(this.pos, this.dir)
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
     this.block()
@@ -27,7 +27,7 @@ Robot.prototype.moveForward = function() {
 }
 
 Robot.prototype.moveBackward = function() {
-  var grid = this.game.level.grid
+  var grid = this.game.levelManager.current.grid
   var newPos = vector2.subtract(this.pos, this.dir)
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
     this.block()

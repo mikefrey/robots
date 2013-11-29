@@ -1,4 +1,4 @@
 module.exports = [
-  'first',
-  'second'
+  require('../levels/first'),
+  require('../levels/second')
 ]

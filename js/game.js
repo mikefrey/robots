@@ -1,14 +1,21 @@
 var vector2 = require('./vector2')
-// var Level = require('./level')
 var Input = require('./input')
 var ButtonManager = require('./buttonManager')
 var QueueManager = require('./queueManager')
+var LevelManager = require('./levelManager')
 
 var EntityManager = require('./entityManager')
 var Ball = require('./ball')
 var Switch = require('./switch')
 var Robot = require('./robot')
 var Exit = require('./exit')
+
+var enthash = {
+  B: Ball,
+  S: Switch,
+  R: Robot,
+  E: Exit
+}
 
 // degrees to radians
 function d2r(a) {
@@ -30,18 +37,18 @@ var Game = module.exports = function(opts) {
   this.gridSize = opts.gridSize
   this.topMargin = opts.topMargin
 
-  // setup the canvases
+  // setup the canvas
   this.ctx = this.initCanvas(opts.canvas, width, height)
-  // this.bgctx = this.initCanvas(opts.bgcanvas, width, height)
 
   this.input = new Input(opts.canvas)
   this.buttonManager = new ButtonManager()
   this.queueManager = new QueueManager()
+  this.levelManager = new LevelManager()
 }
 
-Game.prototype.loadLevel = function(Level) {
-  var level = this.level = new Level(this)
-  this.loadEntities()
+Game.prototype.loadLevel = function(idx) {
+  var level = this.levelManager.load(idx)
+  this.loadEntities(level)
 }
 
 // starts the game loop
@@ -69,6 +76,7 @@ Game.prototype.loop = function() {
 
 // update all the things
 Game.prototype.update = function() {
+  this.levelManager.update()
   this.buttonManager.update()
   this.queueManager.update()
   this.entities.invoke('update', [this.ctx], 'Robot')
@@ -80,9 +88,9 @@ Game.prototype.update = function() {
 // draw all the things
 Game.prototype.draw = function() {
   this.ctx.clearRect(0, 0, this.width, this.height)
-  // this.bgctx.clearRect(0, 0, this.width, this.height)
+
   // draw the level
-  this.level.draw(this.ctx)
+  this.levelManager.draw(this.ctx)
 
   // draw each entity
   this.entities.invoke('draw', [this.ctx], 'Exit')
@@ -105,12 +113,12 @@ Game.prototype.entitiesOfType = function(type) {
 }
 
 // load the entities from the level
-Game.prototype.loadEntities = function() {
+Game.prototype.loadEntities = function(level) {
   var ents = this.entities = new EntityManager()
-  var map = this.level.entityMap
+  var map = level.entityMap
   for (var y = 0; y < map.length; y+=1) {
     for (var x = 0; x < map[y].length; x+=1) {
-      var Ent = map[y][x]
+      var Ent = enthash[map[y][x]]
       if (Ent) {
         // create the entity
         var ent = new Ent({x:x,y:y})
