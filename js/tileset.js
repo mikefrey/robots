@@ -6,6 +6,7 @@ var TileSet = module.exports = function(src, w, h, ox, oy) {
   this.height = h
   this.offsetX = ox
   this.offsetY = oy
+  this.src = src
 
   this.texture = new Texture(src)
   this.echo('load', this.texture)

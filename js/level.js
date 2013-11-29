@@ -11,9 +11,9 @@ var S = Switch
 var R = Robot
 var E = Exit
 
-var Level = module.exports = function(game) {
+var Level = module.exports = function(tiles) {
   this.game = require('./game').game
-  this.tiles = new TileSet('images/isotiles.png', 64, 64, 4, 16)
+  this.tiles = tiles || new TileSet('images/isotiles.png', 64, 64, 4, 16)
 
   var p1 = this.game.s2w({x:0, y:0})
   var p2 = this.game.s2w({x:0, y:this.game.scale})

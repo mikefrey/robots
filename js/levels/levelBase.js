@@ -1,5 +1,6 @@
 
 function Level() {
+  this.game = require('./game').game
 
 }
 
@@ -24,7 +25,6 @@ Level.prototype.draw = function(ctx) {
       // ctx.stroke()
     }
   }
-
 
   this.game.isoCtx(ctx, function() {
 
@@ -52,3 +52,5 @@ Level.prototype.draw = function(ctx) {
     // }
 
   })
+
+}
