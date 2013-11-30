@@ -20,29 +20,29 @@ var Robot = module.exports = function Robot(pos) {
   pubsub.on('robotStart', this.start.bind(this))
 }
 
-Robot.prototype.moveForward = function() {
+var proto = Robot.prototype
+
+proto.move = function(newPos) {
   var grid = this.game.levelManager.current.grid
+  if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
+    this.block()
+  } else {
+    this.pos = newPos
+  }
+  return this
+}
+
+proto.moveForward = function() {
   var newPos = vector2.add(this.pos, this.dir)
-  if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
-    this.block()
-  } else {
-    this.pos = newPos
-  }
-  return this
+  return this.move(newPos)
 }
 
-Robot.prototype.moveBackward = function() {
-  var grid = this.game.levelManager.current.grid
+proto.moveBackward = function() {
   var newPos = vector2.subtract(this.pos, this.dir)
-  if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
-    this.block()
-  } else {
-    this.pos = newPos
-  }
-  return this
+  return this.move(newPos)
 }
 
-Robot.prototype.turnLeft = function() {
+proto.turnLeft = function() {
   var x = this.dir.x
   var y = this.dir.y
   this.dir.x = y
@@ -50,7 +50,7 @@ Robot.prototype.turnLeft = function() {
   return this
 }
 
-Robot.prototype.turnRight = function() {
+proto.turnRight = function() {
   var x = this.dir.x
   var y = this.dir.y
   this.dir.x = -y
@@ -58,13 +58,13 @@ Robot.prototype.turnRight = function() {
   return this
 }
 
-Robot.prototype.turnAround = function() {
+proto.turnAround = function() {
   this.dir.x *= -1
   this.dir.y *= -1
   return this
 }
 
-Robot.prototype.pickup = function() {
+proto.pickup = function() {
   var target = this.game.entityAt(vector2.add(this.pos, this.dir), Ball.name)
   if (target && target.pickedUp()) {
     this.ball = target
@@ -74,7 +74,7 @@ Robot.prototype.pickup = function() {
   return this
 }
 
-Robot.prototype.release = function() {
+proto.release = function() {
   if (this.ball && this.ball.dropped()) {
     this.ball = null
   } else {
@@ -83,26 +83,26 @@ Robot.prototype.release = function() {
   return this
 }
 
-Robot.prototype.moveBall = function() {
+proto.moveBall = function() {
   if (this.ball) {
     this.ball.pos = vector2.add(this.pos, this.dir)
   }
 }
 
-Robot.prototype.block = function() {
+proto.block = function() {
   this.blocked = true
 }
 
-Robot.prototype.start = function() {
+proto.start = function() {
   this.timer.set(0)
   this.timer.unpause()
 }
 
-Robot.prototype.stop = function() {
+proto.stop = function() {
   this.timer.pause()
 }
 
-Robot.prototype.update = function() {
+proto.update = function() {
   if (this.queue.count() == 0)
     return this.stop()
 
@@ -119,7 +119,7 @@ Robot.prototype.update = function() {
   }
 }
 
-Robot.prototype.draw = function(ctx) {
+proto.draw = function(ctx) {
   var scale = this.game.scale
 
   this.game.isoCtx(ctx, function() {
