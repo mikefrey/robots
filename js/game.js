@@ -11,12 +11,12 @@ var Switch = require('./switch')
 var Robot = require('./robot')
 var Exit = require('./exit')
 
-var enthash = {
-  B: Ball,
-  S: Switch,
-  R: Robot,
-  E: Exit
-}
+// var enthash = {
+//   B: Ball,
+//   S: Switch,
+//   R: Robot,
+//   E: Exit
+// }
 
 // degrees to radians
 function d2r(a) {
@@ -42,29 +42,31 @@ var Game = module.exports = function(opts) {
   this.ctx = this.initCanvas(opts.canvas, width, height)
 
   this.input = new Input(opts.canvas)
-  this.buttonManager = new ButtonManager()
-  this.queueManager = new QueueManager()
+  // this.buttonManager = new ButtonManager()
+  // this.queueManager = new QueueManager()
   this.levelManager = new LevelManager()
 }
 
-Game.prototype.loadLevel = function(idx) {
+var proto = Game.prototype
+
+proto.loadLevel = function(idx) {
   var level = this.levelManager.load(idx)
-  this.loadEntities(level)
+  // this.loadEntities(level)
 }
 
 // starts the game loop
-Game.prototype.start = function() {
+proto.start = function() {
   this.loop()
 }
 
 // suspends the game loop
-Game.prototype.stop = function() {
+proto.stop = function() {
   cancelAnimationFrame(this.rAFID)
 }
-Game.prototype.pause = Game.prototype.stop
+proto.pause = proto.stop
 
 // the game loop
-Game.prototype.loop = function() {
+proto.loop = function() {
   this.rAFID = requestAnimationFrame(this.loop.bind(this), this.ctx.canvas)
 
   stats.begin();
@@ -76,63 +78,63 @@ Game.prototype.loop = function() {
 }
 
 // update all the things
-Game.prototype.update = function() {
+proto.update = function() {
   Timer.step()
 
   this.levelManager.update()
-  this.buttonManager.update()
-  this.queueManager.update()
-  this.entities.invoke('update', [this.ctx], 'Robot')
-  this.entities.invoke('update', [this.ctx], 'Ball')
-  this.entities.invoke('update', [this.ctx], 'Switch')
-  this.entities.invoke('update', [this.ctx], 'Exit')
+  // this.buttonManager.update()
+  // this.queueManager.update()
+  // this.entities.invoke('update', [this.ctx], 'Robot')
+  // this.entities.invoke('update', [this.ctx], 'Ball')
+  // this.entities.invoke('update', [this.ctx], 'Switch')
+  // this.entities.invoke('update', [this.ctx], 'Exit')
 }
 
 // draw all the things
-Game.prototype.draw = function() {
+proto.draw = function() {
   this.ctx.clearRect(0, 0, this.width, this.height)
 
   // draw the level
   this.levelManager.draw(this.ctx)
 
-  // draw each entity
-  this.entities.invoke('draw', [this.ctx], 'Exit')
-  this.entities.invoke('draw', [this.ctx], 'Switch')
-  this.entities.invoke('draw', [this.ctx], 'Robot')
-  this.entities.invoke('draw', [this.ctx], 'Ball')
+  // // draw each entity
+  // this.entities.invoke('draw', [this.ctx], 'Exit')
+  // this.entities.invoke('draw', [this.ctx], 'Switch')
+  // this.entities.invoke('draw', [this.ctx], 'Robot')
+  // this.entities.invoke('draw', [this.ctx], 'Ball')
 
-  // draw any UI last
-  this.buttonManager.draw(this.ctx)
-  this.queueManager.draw(this.ctx)
+  // // draw any UI last
+  // this.buttonManager.draw(this.ctx)
+  // this.queueManager.draw(this.ctx)
 }
 
 // get the entity at the given position
-Game.prototype.entityAt = function(pos, type) {
+proto.entityAt = function(pos, type) {
   return this.entities.atPos(pos, type)
 }
 
-Game.prototype.entitiesOfType = function(type) {
+proto.entitiesOfType = function(type) {
   return this.entities.ofType(type)
 }
 
-// load the entities from the level
-Game.prototype.loadEntities = function(level) {
-  var ents = this.entities = new EntityManager()
-  var map = level.entityMap
-  for (var y = 0; y < map.length; y+=1) {
-    for (var x = 0; x < map[y].length; x+=1) {
-      var Ent = enthash[map[y][x]]
-      if (Ent) {
-        // create the entity
-        var ent = new Ent({x:x,y:y})
-        // check to see if it's the robot
-        if (ent instanceof Robot) this.robot = ent
-        // add it to the entity collection
-        ents.add(Ent.name, ent)
-      }
-    }
-  }
-}
+// // load the entities from the level
+// proto.loadEntities = function(level) {
+//   var ents = this.entities = new EntityManager()
+//   var map = level.entityMap
+//   for (var y = 0; y < map.length; y+=1) {
+//     for (var x = 0; x < map[y].length; x+=1) {
+//       var Ent = enthash[map[y][x]]
+//       if (Ent) {
+//         // create the entity
+//         var ent = new Ent({x:x,y:y})
+//         // check to see if it's the robot
+//         if (ent instanceof Robot) this.robot = ent
+//         // add it to the entity collection
+//         ents.add(Ent.name, ent)
+//       }
+//     }
+//   }
+// }
 
 var theta = d2r(45)
 var csTheta = Math.cos(theta)
@@ -142,7 +144,7 @@ var csThetaInv = Math.cos(thetaInv)
 var snThetaInv = Math.sin(thetaInv)
 
 // translate screen to world
-Game.prototype.s2w = function(pos) {
+proto.s2w = function(pos) {
   // rotate
   var x = pos.x
   var y = pos.y
@@ -157,7 +159,7 @@ Game.prototype.s2w = function(pos) {
 }
 
 // translate world to screen
-Game.prototype.w2s = function(pos) {
+proto.w2s = function(pos) {
   // translate
   pos.x -= this.width/2
   pos.y -= this.topMargin
@@ -172,7 +174,7 @@ Game.prototype.w2s = function(pos) {
 }
 
 // setup canvase elements to the correct size
-Game.prototype.initCanvas = function(id, width, height) {
+proto.initCanvas = function(id, width, height) {
   var canvas = document.getElementById(id)
   canvas.width = width
   canvas.height = height
@@ -180,7 +182,7 @@ Game.prototype.initCanvas = function(id, width, height) {
 }
 
 // transform the context into isometric
-Game.prototype.isoCtx = function(ctx, fn) {
+proto.isoCtx = function(ctx, fn) {
   ctx.save()
 
   // move the game board down a bit
@@ -193,6 +195,6 @@ Game.prototype.isoCtx = function(ctx, fn) {
   ctx.restore()
 }
 
-Game.prototype.d2r = d2r
+proto.d2r = d2r
 
-Game.prototype.r2d = r2d
+proto.r2d = r2d
