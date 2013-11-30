@@ -1,5 +1,6 @@
 var vector2 = require('./vector2')
 var Input = require('./input')
+var Timer = require('./timer')
 var ButtonManager = require('./buttonManager')
 var QueueManager = require('./queueManager')
 var LevelManager = require('./levelManager')
@@ -76,6 +77,8 @@ Game.prototype.loop = function() {
 
 // update all the things
 Game.prototype.update = function() {
+  Timer.step()
+
   this.levelManager.update()
   this.buttonManager.update()
   this.queueManager.update()

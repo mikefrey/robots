@@ -1,5 +1,6 @@
 var vector2 = require('./vector2')
 var pubsub = require('./lib/pubsub')
+var Timer = require('./timer')
 
 var Ball = require('./ball')
 
@@ -8,8 +9,12 @@ var Robot = module.exports = function Robot(pos) {
   this.pos = pos
   this.dir = { x:1, y:0 }
   this.queue = this.game.queueManager
-  this.freq = 400
+  this.freq = 0.4
   this.blocked = false
+  this.stopped = true
+
+  this.timer = new Timer(Number.MAX_VALUE)
+  this.timer.pause()
 
   // pubsub.on('commandButtonPressed', this.enqueue.bind(this))
   pubsub.on('robotStart', this.start.bind(this))
@@ -88,39 +93,30 @@ Robot.prototype.block = function() {
   this.blocked = true
 }
 
-// Robot.prototype.enqueue = function(btn) {
-//   var fname = btn.command
-//   if (fname === 'start') return this.start()
-//   if (typeof this[fname] == 'function')
-//     this.queue.push(fname)
-// }
-
 Robot.prototype.start = function() {
-  this.step()
+  this.timer.set(0)
+  this.timer.unpause()
 }
 
 Robot.prototype.stop = function() {
-  if (this.timeout) {
-    clearTimeout(this.timeout)
-  }
-}
-
-Robot.prototype.step = function() {
-  if (this.queue.count() == 0) {
-    return
-  }
-  if (this.blocked) {
-    this.queue.reset()
-    return
-  }
-
-  var action = this.queue.pop()
-  this[action]()
-  this.moveBall()
-  this.timeout = setTimeout(this.step.bind(this), this.freq)
+  this.timer.pause()
 }
 
 Robot.prototype.update = function() {
+  if (this.queue.count() == 0)
+    return this.stop()
+
+  if (this.blocked) {
+    this.queue.reset()
+    return this.stop()
+  }
+
+  if (this.timer.delta() > 0) {
+    var action = this.queue.pop()
+    this[action]()
+    this.moveBall()
+    this.timer.set(this.freq)
+  }
 }
 
 Robot.prototype.draw = function(ctx) {
