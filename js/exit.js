@@ -1,4 +1,6 @@
+var pubsub = require('./lib/pubsub')
 var Switch = require('./switch')
+var Robot = require('./robot')
 
 var Exit = module.exports = function Exit(pos) {
   this.game = require('./game').game
@@ -6,12 +8,15 @@ var Exit = module.exports = function Exit(pos) {
 }
 
 Exit.prototype.update = function() {
-
   this.state = Exit.STATE.INACTIVE
   if (this.allSwitchesOn()) {
     this.state = Exit.STATE.ACTIVE
-  }
 
+    var r = this.game.entityAt(this.pos, Robot.name)
+    if (r) {
+      pubsub.trigger('exitLevel')
+    }
+  }
 }
 
 Exit.prototype.draw = function(ctx) {

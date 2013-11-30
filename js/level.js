@@ -1,9 +1,11 @@
-
+var pubsub = require('./lib/pubsub')
 var Ball = require('./ball')
 var Switch = require('./switch')
 var Robot = require('./robot')
 var Exit = require('./exit')
 var TileSet = require('./tileset')
+
+var Intermission = require('./intermission')
 
 var _ = 0
 var B = Ball
@@ -23,12 +25,15 @@ var Level = module.exports = function(conf) {
   var p1 = this.game.s2w({x:0, y:0})
   var p2 = this.game.s2w({x:0, y:this.game.scale})
   this.isoTileWidth = Math.abs(p2.x - p1.x)*2
+
+  pubsub.on('exitLevel', this.end.bind(this))
 }
 
 var proto = Level.prototype
 
 proto.update = function() {
-
+  if (this.intermission)
+    this.intermission.update()
 }
 
 proto.draw = function(ctx) {
@@ -47,6 +52,10 @@ proto.draw = function(ctx) {
       // ctx.fill()
       // ctx.stroke()
     }
+  }
+
+  if (this.intermission) {
+    this.intermission.draw(ctx)
   }
 
 
@@ -77,4 +86,12 @@ proto.draw = function(ctx) {
 
   // })
 
+}
+
+proto.dispose = function() {
+
+}
+
+proto.end = function() {
+  this.intermission = new Intermission()
 }

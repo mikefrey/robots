@@ -1,4 +1,4 @@
-var buttonDefs = require('./buttons')
+var buttonDefs = require('./config/buttons')
 var Button = require('./button')
 var Sprite = require('./sprite')
 
