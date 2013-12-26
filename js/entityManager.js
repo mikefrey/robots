@@ -1,21 +1,52 @@
 var vector2 = require('./vector2')
+var Ball = require('./ball')
+var Switch = require('./switch')
+var Robot = require('./robot')
+var Exit = require('./exit')
 
-var EntityManager = module.exports = function() {
-  this.entities = []
-  this.byType = {}
+var enthash = {
+  B: Ball,
+  S: Switch,
+  R: Robot,
+  E: Exit
 }
 
-EntityManager.prototype.add = function(type, ent) {
+var EntityManager = module.exports = function(entMap) {
+  this.entities = []
+  this.byType = {}
+  this.loadEntities(entMap)
+}
+
+var proto = EntityManager.prototype
+
+// load the entities from the level
+proto.loadEntities = function(map) {
+  for (var y = 0; y < map.length; y+=1) {
+    for (var x = 0; x < map[y].length; x+=1) {
+      var Ent = enthash[map[y][x]]
+      if (Ent) {
+        // create the entity
+        var ent = new Ent({x:x,y:y})
+        // check to see if it's the robot
+        if (ent instanceof Robot) this.robot = ent
+        // add it to the entity collection
+        this.add(Ent.name, ent)
+      }
+    }
+  }
+}
+
+proto.add = function(type, ent) {
   this.entities.push(ent)
   this.byType[type] || (this.byType[type] = [])
   this.byType[type].push(ent)
 }
 
-EntityManager.prototype.ofType = function(type) {
+proto.ofType = function(type) {
   return this.byType[type]
 }
 
-EntityManager.prototype.atPos = function(pos, type) {
+proto.atPos = function(pos, type) {
   var ents = this.byType[type]
   for (var i = 0; i < ents.length; i+=1) {
     var ent = ents[i]
@@ -26,7 +57,7 @@ EntityManager.prototype.atPos = function(pos, type) {
   return null
 }
 
-EntityManager.prototype.invoke = function(fnName, args, type) {
+proto.invoke = function(fnName, args, type) {
   var ents = this.entities
   if (type) ents = this.byType[type]
 
@@ -39,31 +70,31 @@ EntityManager.prototype.invoke = function(fnName, args, type) {
   }
 }
 
-EntityManager.prototype._doInvoke0 = function(fnName, args, ents) {
+proto._doInvoke0 = function(fnName, args, ents) {
   for (var i = 0; i < ents.length; i+=1) {
     ents[i][fnName]()
   }
 }
 
-EntityManager.prototype._doInvoke1 = function(fnName, args, ents) {
+proto._doInvoke1 = function(fnName, args, ents) {
   for (var i = 0; i < ents.length; i+=1) {
     ents[i][fnName](args[0])
   }
 }
 
-EntityManager.prototype._doInvoke2 = function(fnName, args, ents) {
+proto._doInvoke2 = function(fnName, args, ents) {
   for (var i = 0; i < ents.length; i+=1) {
     ents[i][fnName](args[0], args[1])
   }
 }
 
-EntityManager.prototype._doInvoke3 = function(fnName, args, ents) {
+proto._doInvoke3 = function(fnName, args, ents) {
   for (var i = 0; i < ents.length; i+=1) {
     ents[i][fnName](args[0], args[1], args[2])
   }
 }
 
-EntityManager.prototype._doInvokeA = function(fnName, args, ents) {
+proto._doInvokeA = function(fnName, args, ents) {
   for (var i = 0; i < ents.length; i+=1) {
     ents[i][fnName].apply(ents[i], args)
   }

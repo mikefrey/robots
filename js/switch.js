@@ -25,9 +25,9 @@ Switch.prototype.update = function() {
 }
 
 Switch.prototype.draw = function(ctx) {
-  var d2r = this.game.d2r
+  var d2r = Math.d2r
   var scale = this.game.scale
-  this.game.isoCtx(ctx, function() {
+  ctx.iso(function() {
     ctx.translate(
       this.pos.x * scale + scale / 2,
       this.pos.y * scale + scale / 2

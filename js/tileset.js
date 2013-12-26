@@ -6,6 +6,7 @@ var TileSet = module.exports = function(src, w, h, ox, oy) {
   this.height = h
   this.offsetX = ox
   this.offsetY = oy
+  this.src = src
 
   this.texture = new Texture(src)
   this.echo('load', this.texture)
@@ -13,7 +14,9 @@ var TileSet = module.exports = function(src, w, h, ox, oy) {
 
 pubsub.extend(TileSet.prototype)
 
-TileSet.prototype.draw = function(ctx, t, x, y, w) {
+var proto = TileSet.prototype
+
+proto.draw = function(ctx, t, x, y, w) {
   var sx = t * this.width
   var sy = 0
   var sw = this.width
@@ -30,5 +33,4 @@ TileSet.prototype.draw = function(ctx, t, x, y, w) {
 
   ctx.drawImage(this.texture.img, sx, sy, sw, sh, dx, dy, dw, dh)
 }
-
 

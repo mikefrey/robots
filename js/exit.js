@@ -1,4 +1,6 @@
+var pubsub = require('./lib/pubsub')
 var Switch = require('./switch')
+var Robot = require('./robot')
 
 var Exit = module.exports = function Exit(pos) {
   this.game = require('./game').game
@@ -6,17 +8,21 @@ var Exit = module.exports = function Exit(pos) {
 }
 
 Exit.prototype.update = function() {
-
   this.state = Exit.STATE.INACTIVE
   if (this.allSwitchesOn()) {
     this.state = Exit.STATE.ACTIVE
-  }
 
+    var level = this.game.levelManager.current
+    var r = level.entities.atPos(this.pos, Robot.name)
+    if (r) {
+      pubsub.trigger('exitLevel')
+    }
+  }
 }
 
 Exit.prototype.draw = function(ctx) {
   var scale = this.game.scale
-  this.game.isoCtx(ctx, function() {
+  ctx.iso(function() {
     ctx.translate(
       this.pos.x * scale + scale / 2,
       this.pos.y * scale + scale / 2
@@ -40,7 +46,8 @@ Exit.prototype.draw = function(ctx) {
 }
 
 Exit.prototype.allSwitchesOn = function() {
-  var ents = game.entitiesOfType(Switch.name)
+  var level = this.game.levelManager.current
+  var ents = level.entities.ofType(Switch.name)
   if (!ents || !ents.length) return true
 
   for (var i = 0; i < ents.length; i+=1) {

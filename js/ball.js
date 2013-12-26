@@ -6,7 +6,8 @@ var Ball = module.exports = function Ball(pos) {
 }
 
 Ball.prototype.dropped = function() {
-  var target = this.game.entityAt(this.pos, Switch.name)
+  var level = this.game.levelManager.current
+  var target = level.entities.atPos(this.pos, Switch.name)
   if (target) {
     return target.turnOn(this)
   }
@@ -14,7 +15,8 @@ Ball.prototype.dropped = function() {
 }
 
 Ball.prototype.pickedUp = function() {
-  var target = this.game.entityAt(this.pos, Switch.name)
+  var level = this.game.levelManager.current
+  var target = level.entities.atPos(this.pos, Switch.name)
   if (target) {
     return target.turnOff(this)
   }
@@ -26,9 +28,9 @@ Ball.prototype.update = function() {
 }
 
 Ball.prototype.draw = function(ctx) {
-  var d2r = this.game.d2r
+  var d2r = Math.d2r
   var scale = this.game.scale
-  this.game.isoCtx(ctx, function() {
+  ctx.iso(function() {
     ctx.translate(
       this.pos.x * scale + scale / 2,
       this.pos.y * scale + scale / 2
