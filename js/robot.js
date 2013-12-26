@@ -22,7 +22,7 @@ var Robot = module.exports = function Robot(pos) {
 var proto = Robot.prototype
 
 proto.move = function(newPos) {
-  var grid = this.game.levelManager.current.grid
+  var grid = this.game.levelManager.current.grid.grid
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
     this.block()
   } else {

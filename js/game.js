@@ -162,8 +162,8 @@ CanvasRenderingContext2D.prototype.iso = function(fn) {
   this.save()
 
   // move the game board down a bit
-  this.translate(0, this.topMargin)
-  this.translate(this.width/2, 0)
+  this.translate(0, Game.game.topMargin)
+  this.translate(Game.game.width/2, 0)
   this.scale(1, 0.5)
   this.rotate(45 * Math.PI / 180)
   // this.transform(0.707, 0.409, -0.707, 0.409, 0, 0)
