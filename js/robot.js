@@ -65,7 +65,7 @@ proto.turnAround = function() {
 
 proto.pickup = function() {
   var level = this.game.levelManager.current
-  var target = level.entityAt(vector2.add(this.pos, this.dir), Ball.name)
+  var target = level.entities.atPos(vector2.add(this.pos, this.dir), Ball.name)
   if (target && target.pickedUp()) {
     this.ball = target
   } else {

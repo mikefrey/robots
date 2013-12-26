@@ -12,7 +12,8 @@ Exit.prototype.update = function() {
   if (this.allSwitchesOn()) {
     this.state = Exit.STATE.ACTIVE
 
-    var r = this.game.entityAt(this.pos, Robot.name)
+    var level = this.game.levelManager.current
+    var r = level.entities.atPos(this.pos, Robot.name)
     if (r) {
       pubsub.trigger('exitLevel')
     }
