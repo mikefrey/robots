@@ -6,10 +6,8 @@ var Ball = require('./ball')
 
 var Robot = module.exports = function Robot(pos) {
   this.game = require('./game').game
-  this.level = this.game.levelManager.current
   this.pos = pos
   this.dir = { x:1, y:0 }
-  this.queue = this.level.queueManager
   this.freq = 0.4
   this.blocked = false
   this.stopped = true
@@ -24,7 +22,7 @@ var Robot = module.exports = function Robot(pos) {
 var proto = Robot.prototype
 
 proto.move = function(newPos) {
-  var grid = this.level.grid
+  var grid = this.game.levelManager.current.grid
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
     this.block()
   } else {
@@ -66,7 +64,8 @@ proto.turnAround = function() {
 }
 
 proto.pickup = function() {
-  var target = this.level.entityAt(vector2.add(this.pos, this.dir), Ball.name)
+  var level = this.game.levelManager.current
+  var target = level.entityAt(vector2.add(this.pos, this.dir), Ball.name)
   if (target && target.pickedUp()) {
     this.ball = target
   } else {
@@ -104,16 +103,17 @@ proto.stop = function() {
 }
 
 proto.update = function() {
-  if (this.queue.count() == 0)
+  var queue = this.game.levelManager.current.queueManager
+  if (queue.count() == 0)
     return this.stop()
 
   if (this.blocked) {
-    this.queue.reset()
+    queue.reset()
     return this.stop()
   }
 
   if (this.timer.delta() > 0) {
-    var action = this.queue.pop()
+    var action = queue.pop()
     this[action]()
     this.moveBall()
     this.timer.set(this.freq)

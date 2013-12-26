@@ -45,7 +45,8 @@ Exit.prototype.draw = function(ctx) {
 }
 
 Exit.prototype.allSwitchesOn = function() {
-  var ents = game.entitiesOfType(Switch.name)
+  var level = this.game.levelManager.current
+  var ents = level.entities.ofType(Switch.name)
   if (!ents || !ents.length) return true
 
   for (var i = 0; i < ents.length; i+=1) {

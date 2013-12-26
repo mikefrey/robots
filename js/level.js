@@ -45,8 +45,8 @@ proto.update = function() {
 
 proto.draw = function(ctx) {
 
-  // draw the tiles
-  this.tiles.draw(ctx)
+  // draw the grid
+  this.grid.draw(ctx)
 
   // draw each entity
   this.entities.invoke(DRAW, [this.ctx], EXIT)
