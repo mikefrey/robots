@@ -2,6 +2,7 @@ var pubsub = require('./lib/pubsub')
 var Grid = require('./grid')
 var ButtonManager = require('./buttonManager')
 var QueueManager = require('./queueManager')
+var EntityManager = require('./entityManager')
 var Intermission = require('./intermission')
 
 // var _ = 0
@@ -14,8 +15,9 @@ var DRAW = 'draw'
 
 var Level = module.exports = function(conf) {
   this.game = require('./game').game
+  this.ctx = this.game.ctx
 
-  this.grid = new Grid(conf.grid)
+  this.grid = new Grid(conf.grid, conf.tiles)
   this.entities = new EntityManager(conf.entityMap)
   if (this.entities.robot) {
     this.robot = this.entities.robot

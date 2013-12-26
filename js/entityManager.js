@@ -11,9 +11,10 @@ var enthash = {
   E: Exit
 }
 
-var EntityManager = module.exports = function() {
+var EntityManager = module.exports = function(entMap) {
   this.entities = []
   this.byType = {}
+  this.loadEntities(entMap)
 }
 
 var proto = EntityManager.prototype

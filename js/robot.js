@@ -6,9 +6,10 @@ var Ball = require('./ball')
 
 var Robot = module.exports = function Robot(pos) {
   this.game = require('./game').game
+  this.level = this.game.levelManager.current
   this.pos = pos
   this.dir = { x:1, y:0 }
-  this.queue = this.game.queueManager
+  this.queue = this.level.queueManager
   this.freq = 0.4
   this.blocked = false
   this.stopped = true
@@ -23,7 +24,7 @@ var Robot = module.exports = function Robot(pos) {
 var proto = Robot.prototype
 
 proto.move = function(newPos) {
-  var grid = this.game.levelManager.current.grid
+  var grid = this.level.grid
   if (!grid[newPos.y] || !grid[newPos.y][newPos.x]) {
     this.block()
   } else {
@@ -65,7 +66,7 @@ proto.turnAround = function() {
 }
 
 proto.pickup = function() {
-  var target = this.game.entityAt(vector2.add(this.pos, this.dir), Ball.name)
+  var target = this.level.entityAt(vector2.add(this.pos, this.dir), Ball.name)
   if (target && target.pickedUp()) {
     this.ball = target
   } else {
@@ -122,7 +123,7 @@ proto.update = function() {
 proto.draw = function(ctx) {
   var scale = this.game.scale
 
-  this.game.isoCtx(ctx, function() {
+  ctx.iso(function() {
 
     ctx.save()
     ctx.translate(

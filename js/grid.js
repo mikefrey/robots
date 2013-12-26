@@ -36,7 +36,7 @@ proto.draw = function(ctx) {
     }
   }
 
-  // this.game.isoCtx(ctx, function() {
+  // ctx.iso(function() {
 
   //   // draw the grid tiles
   //   for (var y = 0; y < grid.length; y+=1) {
