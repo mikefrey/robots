@@ -45,6 +45,10 @@ proto.unpause = function() {
   }
 }
 
+proto.paused = function() {
+  return !!this.pausedAt
+}
+
 Timer._last = 0
 Timer.time = Number.MIN_VALUE
 Timer.timeScale = 1

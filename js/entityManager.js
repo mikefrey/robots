@@ -99,5 +99,3 @@ proto._doInvokeA = function(fnName, args, ents) {
     ents[i][fnName].apply(ents[i], args)
   }
 }
-
-

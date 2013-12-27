@@ -17,6 +17,22 @@ var QueueButton = module.exports = function QueueButton(button, pos) {
 
 inherits(QueueButton, Button)
 
-QueueButton.prototype.tapped = function() {
+var proto = QueueButton.prototype
+
+proto.tapped = function() {
   pubsub.trigger('queueButtonPressed', [this])
+}
+
+proto.draw = function(ctx, current) {
+  // draw a border around the button being executed
+  this.state = Button.STATE.NORMAL
+  if (current) {
+    // ctx.save()
+    // ctx.translate(this.pos.x, this.pos.y)
+    // ctx.strokeRect(-2, -2, this.width+4, this.height+4)
+    // ctx.restore()
+    this.state = Button.STATE.DOWN
+  }
+
+  Button.prototype.draw.call(this, ctx)
 }
