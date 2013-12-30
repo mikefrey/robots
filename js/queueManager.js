@@ -33,7 +33,6 @@ proto.remove = function(btn) {
 proto.next = function() {
   this.curIndex += 1
   var btn = this.buttons[this.curIndex]
-  // this.recalculatePosX()
   return btn && btn.command || null
 }
 

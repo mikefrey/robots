@@ -19,7 +19,6 @@ var Robot = module.exports = function Robot(pos) {
   this.timer = new Timer(Number.MAX_VALUE)
   this.timer.pause()
 
-  // pubsub.on('commandButtonPressed', this.enqueue.bind(this))
   pubsub.on('robotStart', this.start.bind(this))
 }
 
@@ -111,7 +110,6 @@ proto.start = function() {
 }
 
 proto.stop = function() {
-  this.timer.set(this.freq)
   this.timer.pause()
 }
 
