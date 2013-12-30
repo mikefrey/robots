@@ -3,12 +3,6 @@ var Input = require('./input')
 var Timer = require('./timer')
 var LevelManager = require('./levelManager')
 
-var EntityManager = require('./entityManager')
-var Ball = require('./ball')
-var Switch = require('./switch')
-var Robot = require('./robot')
-var Exit = require('./exit')
-
 var Game = module.exports = function(opts) {
   Game.game = this
 
@@ -22,8 +16,6 @@ var Game = module.exports = function(opts) {
   this.ctx = this.initCanvas(opts.canvas, width, height)
 
   this.input = new Input(opts.canvas)
-  // this.buttonManager = new ButtonManager()
-  // this.queueManager = new QueueManager()
   this.levelManager = new LevelManager()
 }
 
@@ -31,7 +23,6 @@ var proto = Game.prototype
 
 proto.loadLevel = function(idx) {
   var level = this.levelManager.load(idx)
-  // this.loadEntities(level)
 }
 
 // starts the game loop
@@ -60,14 +51,7 @@ proto.loop = function() {
 // update all the things
 proto.update = function() {
   Timer.step()
-
   this.levelManager.update()
-  // this.buttonManager.update()
-  // this.queueManager.update()
-  // this.entities.invoke('update', [this.ctx], 'Robot')
-  // this.entities.invoke('update', [this.ctx], 'Ball')
-  // this.entities.invoke('update', [this.ctx], 'Switch')
-  // this.entities.invoke('update', [this.ctx], 'Exit')
 }
 
 // draw all the things
@@ -76,26 +60,7 @@ proto.draw = function() {
 
   // draw the level
   this.levelManager.draw(this.ctx)
-
-  // // draw each entity
-  // this.entities.invoke('draw', [this.ctx], 'Exit')
-  // this.entities.invoke('draw', [this.ctx], 'Switch')
-  // this.entities.invoke('draw', [this.ctx], 'Robot')
-  // this.entities.invoke('draw', [this.ctx], 'Ball')
-
-  // // draw any UI last
-  // this.buttonManager.draw(this.ctx)
-  // this.queueManager.draw(this.ctx)
 }
-
-// get the entity at the given position
-// proto.entityAt = function(pos, type) {
-//   return this.entities.atPos(pos, type)
-// }
-
-// proto.entitiesOfType = function(type) {
-//   return this.entities.ofType(type)
-// }
 
 // setup canvase elements to the correct size
 proto.initCanvas = function(id, width, height) {
